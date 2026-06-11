@@ -8,23 +8,6 @@ from langchain_core.documents import Document
 from langchain_classic.retrievers import EnsembleRetriever, ContextualCompressionRetriever
 
 
-"""
-retrieve.py — Hybrid retrieval pipeline using LangChain
-
-Architecture:
-  EnsembleRetriever (vector + BM25)  ← Reciprocal Rank Fusion
-    └─► HuggingFaceCrossEncoder       ← explicit rerank with real scores
-          └─► top-N results
-
-Why we rerank manually instead of via ContextualCompressionRetriever:
-  CrossEncoderReranker inside ContextualCompressionRetriever stores scores
-  in doc.metadata["relevance_score"], but whether that key is populated
-  depends on LangChain version. Calling the cross-encoder directly gives us
-  the raw float scores with zero ambiguity.
-"""
-
-
-# ── Configuration ──────────────────────────────────────────────────────────────
 DB_DIR          = "db"
 COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL     = "BAAI/bge-small-en-v1.5"
@@ -36,10 +19,6 @@ FINAL_TOP_N     = 5    # chunks returned after reranking
 # Weights for RRF fusion: [vector_weight, bm25_weight]
 ENSEMBLE_WEIGHTS = [0.6, 0.4]
 
-
-# ── Noise scrubber (mirrors ingest.py clean_markdown, applied at query time) ───
-# Catches any fragments that slipped through ingestion in the existing DB.
-# Re-ingest after updating ingest.py to eliminate this at the source.
 
 _NOISE_PATTERNS = [
     re.compile(r'\d+/\d+\s+info\s+icon\s+Published\s+using\s+Google\s+Docs[^\n]*', re.I),
@@ -61,25 +40,19 @@ def _scrub_noise(text: str) -> str:
     return text.strip()
 
 
-# ── ToC penalty ────────────────────────────────────────────────────────────────
-
 def _is_toc_chunk(text: str) -> bool:
     """Detect Table of Contents or isolated index pages."""
     t = text.lower()
     return ".........." in t or len(re.findall(r"\d+\.\d+\.\d+", t)) > 3
 
 
-# ── Retriever class ────────────────────────────────────────────────────────────
-
 class Retriever:
     def __init__(self):
-        # ── Embeddings (same model as ingest) ─────────────────────────────────
         embeddings = HuggingFaceEmbeddings(
             model_name=EMBED_MODEL,
             encode_kwargs={"normalize_embeddings": True},
         )
 
-        # ── Vector retriever (ChromaDB) ────────────────────────────────────────
         vectorstore = Chroma(
             collection_name=COLLECTION_NAME,
             embedding_function=embeddings,
@@ -90,7 +63,6 @@ class Retriever:
             search_kwargs={"k": HYBRID_TOP_K},
         )
 
-        # ── BM25 retriever (built from all stored docs) ───────────────────────
         print("Building BM25 index from stored documents...")
         all_docs_data = vectorstore.get()    # returns {"ids", "documents", "metadatas"}
         bm25_docs = [
@@ -102,13 +74,11 @@ class Retriever:
         bm25_retriever = BM25Retriever.from_documents(bm25_docs)
         bm25_retriever.k = HYBRID_TOP_K
 
-        # ── Ensemble (Reciprocal Rank Fusion) ─────────────────────────────────
         self.ensemble_retriever = EnsembleRetriever(
             retrievers=[vector_retriever, bm25_retriever],
             weights=ENSEMBLE_WEIGHTS,
         )
 
-        # ── Cross-encoder (used directly so scores are always accessible) ─────
         self.cross_encoder = HuggingFaceCrossEncoder(model_name=RERANK_MODEL)
 
         print(f"✅ Retriever ready ({len(bm25_docs)} chunks indexed)")
@@ -149,7 +119,6 @@ class Retriever:
         return results[:top_n]
 
 
-# ── Smoke test ─────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     r = Retriever()
 
