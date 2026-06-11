@@ -47,20 +47,46 @@ def html_tables_to_markdown(text: str) -> str:
 
 
 def clean_markdown(raw_text: str) -> str:
-    """Strip Google Docs scrape noise and normalize whitespace."""
     noise_patterns = [
         r'\d{1,2}/\d{1,2}/\d{2,4},\s+\d{1,2}:\d{2}\s+[AP]M[^\n]*',
-        r'Google Docs(?: icon| logo)? Published using Google Docs[^\n]*',
-        r'Report abuse\s+Learn more[^\n]*',
-        r'Updated automatically every \d+ minutes[^\n]*',
+
+        # Full footer form: "Google Docs  Published using Google Docs"
+        r'Google Docs(?:\s+icon|\s+logo)?\s+Published using Google Docs[^\n]*',
+
+        # Fragment form that appears mid-chunk after splitting:
+        # "  10/66  info icon  Published using Google Docs  IITM BS Degree ..."
+        r'\d+/\d+\s+info\s+icon\s+Published\s+using\s+Google\s+Docs[^\n]*',
+
+        # Standalone "Published using Google Docs" anywhere
+        r'Published\s+using\s+Google\s+Docs[^\n]*',
+
+        # "info icon" artifact on its own or leading a sentence
+        r'\binfo\s+icon\b[^\n]*',
+
+        # Document title trailers: "IITM BS Degree Programme - Student Handb..."
+        # These appear as orphaned suffixes after the noise strip above
+        r'IITM\s+BS\s+Degree\s+Programme\s*[-–]\s*Student\s+Hand\w*[^\n]*',
+
+        # Report abuse / learn more footer
+        r'Report\s+abuse\s+Learn\s+more[^\n]*',
+
+        # Auto-update notice
+        r'Updated\s+automatically\s+every\s+\d+\s+minutes[^\n]*',
+
+        # Google Docs URLs
         r'https://docs\.google\.com/\S+',
+
+        # Bare page-number artifacts: "  38/66  " or "10/66" on their own
+        r'(?<!\d)\d{1,3}/\d{2,3}(?!\d)(?=\s|$)',
     ]
     text = raw_text
     for pattern in noise_patterns:
         text = re.sub(pattern, '', text, flags=re.IGNORECASE)
 
     text = html_tables_to_markdown(text)
-    text = re.sub(r'\n{3,}', '\n\n', text).strip()
+    # Collapse runs of whitespace left behind by removals
+    text = re.sub(r'[ \t]{2,}', ' ', text)          # multiple spaces → single
+    text = re.sub(r'\n{3,}', '\n\n', text).strip()  # blank line runs → one
     return text
 
 
@@ -70,8 +96,8 @@ def load_and_split(md_path: Path) -> list[Document]:
 
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=HEADERS_TO_SPLIT,
-        strip_headers=False,
-        return_each_line=False
+        strip_headers=False,        
+        return_each_line=False,
     )
     header_docs = header_splitter.split_text(cleaned)
 
@@ -80,13 +106,12 @@ def load_and_split(md_path: Path) -> list[Document]:
         chunk_overlap=CHUNK_OVERLAP,
         separators=["\n\n", "\n", " ", ""],
     )
-
     final_docs = char_splitter.split_documents(header_docs)
-    
+
     for doc in final_docs:
         doc.metadata["source"] = md_path.name
-    
-    print(f"{md_path.name}: {len(final_docs)} chunks")
+
+    print(f"  {md_path.name}: {len(final_docs)} chunks")
     return final_docs
 
 
@@ -98,7 +123,7 @@ def build_index():
     )
 
     all_docs: list[Document] = []
-    for md_path in sorted(DATA_DIR.glob("*md")):
+    for md_path in sorted(DATA_DIR.glob("*.md")):
         print(f"\nProcessing: {md_path.name}")
         all_docs.extend(load_and_split(md_path))
 
@@ -112,7 +137,7 @@ def build_index():
         documents=all_docs,
         embedding=embeddings,
         persist_directory=DB_DIR,
-        collection_name=COLLECTION_NAME
+        collection_name=COLLECTION_NAME,
     )
 
     print(f"\n✅ Ingestion complete! {vectorstore._collection.count()} chunks stored.")
