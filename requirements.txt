@@ -21,3 +21,5 @@ docling
 google-genai   
 python-dotenv
 deepeval
+langchain_chroma
+langchain_huggingface
