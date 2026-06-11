@@ -30,4 +30,5 @@ dependencies = [
     "rank-bm25>=0.2.2",
     "sentence-transformers>=5.5.1",
     "langchain-huggingface>=1.2.2",
+    "langchain-classic>=1.0.8",
 ]
