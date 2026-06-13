@@ -1,36 +1,70 @@
-[
+[ {
+    "id": "grad_001",
+    "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1 on August 1, 2026?",
+    "expected_keywords": ["Python", "MLP", "C prog"],
+    "source": "grading-document.md",
+    "category": "schedules"
+  },
   {
-    "id": "fee_001",
-    "question": "What is the foundation level fee for students joining from Jan 2026 onwards?",
-    "expected_keywords": ["48,000", "48000"],
+    "id": "grad_002",
+    "question": "What is the major grading change implemented for the weightage of GAA in Foundation Level courses?",
+    "expected_keywords": ["0", "zero", "from the assignments"],
+    "source": "grading-document.md",
+    "category": "grading_policy"
+  },
+  {
+    "id": "grad_003",
+    "question": "Under what condition will the complete 10% weightage for the 3 Kaggle Assignments (KA) be calculated in Machine Learning Practice?",
+    "expected_keywords": ["Average score", "3 Kaggle Assignments"],
+    "source": "grading-document.md",
+    "category": "grading_policy"
+  },
+  {
+    "id": "grad_004",
+    "question": "What mandatory passing score and structural requirement must be met in the DBMS OPPE to unlock the course grade?",
+    "expected_keywords": ["minimum of 35%", "Python-Database connectivity", "correct"],
+    "source": "grading-document.md",
+    "category": "eligibility"
+  },
+  {
+    "id": "hand_005",
+    "question": "What are the core courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
+    "expected_keywords": ["Programming in C", "Computer System Design", "Operating Systems", "Computer Networks"],
+    "source": "student-handbook.md",
+    "category": "minors"
+  },
+  {
+    "id": "hand_006",
+    "question": "What is the penalty and final cost if a student fails to pay the Registration Keep Alive (RKA) fee on time?",
+    "expected_keywords": ["10% extra", "1100", "2200"],
     "source": "student-handbook.md",
     "category": "fees"
   },
   {
-    "id": "fee_002",
-    "question": "What is the total fee for Foundation + Two Diplomas under the revised fee structure?",
-    "expected_keywords": ["210,000", "210000"],
+    "id": "grad_007",
+    "question": "What happens to a student's status and their official email ID if they are on Academic Probation for 2 consecutive terms and do not register for the next term?",
+    "expected_keywords": ["Struck off the rolls", "suspended"],
     "source": "student-handbook.md",
-    "category": "fees"
+    "category": "administrative"
   },
   {
-    "id": "fee_003",
-    "question": "What is the total fee for the BS Degree under the revised fee structure?",
-    "expected_keywords": ["386,000", "450,000"],
+    "id": "hand_008",
+    "question": "What are the specific requirements to earn an Advanced Certificate in Programming and Application Development?",
+    "expected_keywords": ["6 theory courses", "Diploma in Programming", "projects pending"],
     "source": "student-handbook.md",
-    "category": "fees"
+    "category": "certification"
   },
   {
-    "id": "fee_004",
-    "question": "What is the foundation level fee for students who joined the program before Sep 2025?",
-    "expected_keywords": ["32,000", "32000"],
+    "id": "hand_009",
+    "question": "What specific academic milestones and checkpoints must a student meet to prevent being removed from the Foundation level program?",
+    "expected_keywords": ["4 courses within 4 terms", "6 courses within 6 terms", "8 foundation courses within 9 terms"],
     "source": "student-handbook.md",
-    "category": "fees"
+    "category": "eligibility"
   },
   {
-    "id": "fee_005",
-    "question": "What fee waiver does an SC/ST student with family income above 5 LPA get?",
-    "expected_keywords": ["50%"],
+    "id": "hand_010",
+    "question": "What are the financial administrative penalties for dropping a course within the 4-week window at different levels?",
+    "expected_keywords": ["Rs 2000", "Foundation", "Rs 4000", "Diploma", "Degree"],
     "source": "student-handbook.md",
     "category": "fees"
   }
