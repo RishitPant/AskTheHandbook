@@ -54,14 +54,16 @@ if not API_KEY:
 
 EVAL_DATA_PATH    = Path(__file__).parent / "eval_prompts.json"
 REPORT_PATH       = Path(__file__).parent / "report.json"
+CHECKPOINT_PATH   = Path(__file__).parent / "eval_checkpoint.json"
 DEFAULT_THRESHOLD = 0.5
-JUDGE_MODEL       = "llama-3.1-8b-instant"
-GEN_MODEL         = "llama-3.1-8b-instant"
+JUDGE_MODEL       = "llama-3.3-70b-versatile"    # judge: cheaper, higher RPM
+GEN_MODEL         = "llama-3.3-70b-versatile"  # gen: quality matters here
 
 # Retry / throttle settings
-MAX_RETRIES   = 6
-BACKOFF_BASE  = 2    # seconds — used only if retry delay isn't parseable
-BETWEEN_CALLS = 3    # polite gap after every successful Groq call
+MAX_RETRIES     = 6
+BACKOFF_BASE    = 2   # seconds — used only if retry delay isn't parseable
+BETWEEN_CALLS   = 3   # polite gap after every successful Groq gen call
+BETWEEN_METRICS = 4   # gap between each metric.measure() judge call
 
 
 # ── Retry helper ───────────────────────────────────────────────────────────────
@@ -180,8 +182,8 @@ def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
     ]
     prompt = (
         "You are an official academic advisor AI for the IITM BS Degree Programme.\n"
-        "Answer the student question ONLY from the provided context. Be concise and factual.\n"
-        'If the answer is not in the context, say "I don\'t have that information."\n\n'
+        "Answer strictly from context. Be concise and factual.\n"
+        "If missing from context, state: I don't have that information.\n"
         "CONTEXT:\n"
         + "\n---\n".join(context_parts)
         + f"\n\nSTUDENT QUESTION: {question}\n"
@@ -194,7 +196,7 @@ def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
             {"role": "user",   "content": prompt},
         ],
         temperature=0.0,
-        max_tokens=200,
+        max_tokens=150,
     )
     return response.choices[0].message.content.strip()
 
@@ -207,13 +209,29 @@ def keyword_hit(answer: str, expected_keywords: list[str]) -> bool:
     return any(kw.lower() in a for kw in expected_keywords)
 
 
+# ── Checkpoint helpers ─────────────────────────────────────────────────────────
+
+def _load_checkpoint() -> dict:
+    """Return previously saved per-question scores, keyed by question id."""
+    if CHECKPOINT_PATH.exists():
+        try:
+            return json.loads(CHECKPOINT_PATH.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def _save_checkpoint(data: dict) -> None:
+    CHECKPOINT_PATH.write_text(json.dumps(data, indent=2))
+
+
 # ── Main evaluation ────────────────────────────────────────────────────────────
 
 def run_evaluation(
     category: str      = None,
     use_deepeval: bool = True,
     threshold: float   = DEFAULT_THRESHOLD,
-    save_report: bool  = False,
+    save_report: bool  = True,
 ):
     print("\n" + "=" * 65)
     print("  IITM BS RAG — DEEPEVAL EVALUATION")
@@ -252,7 +270,7 @@ def run_evaluation(
         question = item["question"]
         print(f"  [{i:02d}/{len(eval_data)}] {question[:70]}")
 
-        chunks   = retriever.retrieve(question, top_n=2)
+        chunks   = retriever.retrieve(question, top_n=4)
         answer   = generate_answer(question, chunks, groq_client)
         contexts = [c["text"][:1000] for c in chunks]
         scores   = [round(c["rerank_score"], 3) for c in chunks]
@@ -300,8 +318,25 @@ def run_evaluation(
             ),
         ]
 
-        for i, tc in enumerate(test_cases, 1):
+        checkpoint = _load_checkpoint()
+        if checkpoint:
+            print(f"  📂 Resuming from checkpoint — {len(checkpoint)} question(s) already done\n")
+
+        for i, (tc, item) in enumerate(zip(test_cases, item_map), 1):
+            qid = item["id"]
             print(f"  [{i:02d}/{len(test_cases)}] {tc.input[:65]}")
+
+            # ── Resume: skip if already scored ──────────────────────────────
+            if qid in checkpoint:
+                q_scores = checkpoint[qid]
+                print(f"    ↩️  skipped (checkpoint)\n")
+                for mname, score in q_scores.items():
+                    if mname in ("question", "keyword_hit"):
+                        continue
+                    results_by_metric.setdefault(mname, []).append(score)
+                per_question_scores.append(q_scores)
+                continue
+
             q_scores = {"question": tc.input, "keyword_hit": kw_hits[i - 1]}
 
             for m in metrics:
@@ -322,7 +357,12 @@ def run_evaluation(
                 results_by_metric.setdefault(mname, []).append(score)
                 q_scores[mname] = round(score, 4)
 
+                # Polite gap between judge calls to avoid 429s
+                time.sleep(BETWEEN_METRICS)
+
             per_question_scores.append(q_scores)
+            checkpoint[qid] = q_scores
+            _save_checkpoint(checkpoint)   # flush after every question
             print()
 
     # ── Phase 3: Aggregate summary ─────────────────────────────────────────────
@@ -395,6 +435,9 @@ def run_evaluation(
     # ── Exit with CI-friendly code ─────────────────────────────────────────────
     if gate_metric >= threshold:
         print(f"\n  ✅ PASSED — RAG quality is above threshold ({threshold:.0%})\n")
+        if CHECKPOINT_PATH.exists():
+            CHECKPOINT_PATH.unlink()
+            print("  🗑️  Checkpoint cleared.\n")
         sys.exit(0)
     else:
         print(f"\n  ❌ FAILED — Quality dropped below threshold ({threshold:.0%})")
@@ -419,5 +462,5 @@ if __name__ == "__main__":
         category=args.category,
         use_deepeval=not args.no_deepeval,
         threshold=args.threshold,
-        save_report=args.save_report,
+        save_report=True,
     )
