@@ -28,7 +28,8 @@ _NOISE_PATTERNS = [
     re.compile(r'Report\s+abuse\s+Learn\s+more[^\n]*', re.I),
     re.compile(r'Updated\s+automatically\s+every\s+\d+\s+minutes[^\n]*', re.I),
     re.compile(r'https://docs\.google\.com/\S+'),
-    re.compile(r'(?<!\d)\d{1,3}/\d{2,3}(?!\d)(?=\s|$)'),
+    re.compile(r'(?<![\d>=])\b\d{1,3}/(?!100\b)\d{2,3}\b(?!\d)\s*(?=\n|$)'),
+    re.compile(r'^#{1,3}\s*BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$', re.I | re.M),
 ]
 
 def _scrub_noise(text: str) -> str:
