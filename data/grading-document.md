@@ -1019,7 +1019,7 @@ BS-DS_ May 2026 Grading document (Student) Updated automatically every 5 minutes
 
 (W11/W12 contents will be included for the final exam. Hence, please practice and submit W11/W12 assignment).
 
-# 6. English 2
+## 6. English 2
 
 **Quiz 1:** July 19 2026 **Quiz 2:** August 16 2026 **End term:** September 13 2026
 
@@ -1041,9 +1041,9 @@ F = score in final exam
 
 (W11/W12 contents will be included for the final exam. Hence, please practice and submit W11/W12 assignment).
 
-# 7. Intro to python programming
+## 7. Intro to python programming
 
-## Academic policies
+### Academic policies
 
 1. In each programming assignment, be it any course or any OPPE, taking help from LLMs (e.g. ChatGPT, Gemini) partially or completely is considered plagiarism.
 
@@ -1291,7 +1291,7 @@ Updated automatically every 5 minutes
 
 Suggested pathway to register and study
 
-## Diploma level courses:
+# Diploma level courses:
 
 1. **Most aggressive pathway** - completing in 4 terms - ONLY IF YOU ARE DOING THIS AS FULL TIME AND NOTHING ELSE AND CAN SPEND <u>70 HRs PER WEEK</u> MINIMUM
 
@@ -1872,15 +1872,8 @@ July 3rd week (Tentative): We will release the slots for OPPE 1 & Dates for OPPE
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ… 13/40
 
-6/9/26, 7:10 PM BS-DS_ May 2026 Grading document (Student)
-
-Google Docs info icon Published using Google Docs Report abuse Learn more
 
 to attend the exam and if you are eligible, exam will be scheduled as per the slots allocated. Please choose courses for the May 2026 term keeping all these points in mind.
-
-BS-DS_ May 2026 Grading document (Student) Updated automatically every 5 minutes
-
-# Diploma level courses
 
 ## 1. Machine Learning foundations (DS Diploma)
 
@@ -1947,17 +1940,6 @@ SoP for the SCT Exam is as follows: <u>Click Here for OPPE SCT SoP Document</u>
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ… 14/40
 
-6/9/26, 7:10 PM
-
-BS-DS_ May 2026 Grading document (Student)
-
-Google Docs icon Published using Google Docs
-
-Report abuse Learn more
-
-BS-DS_ May 2026 Grading document (Student)
-
-Updated automatically every 5 minutes
 
 OPPE1 will not be scheduled for students who fail to complete the OPPE SCT exam.
 <u>Repeat_OPPE Criteria</u> (w.e.f from Jan 2026 term) [updated on Jan 05, 2026]
@@ -2096,7 +2078,9 @@ Google Docs logo Published using Google Docs Report abuse Learn more
 # BS-DS_ May 2026 Grading document (Student)
 Updated automatically every 5 minutes
 
-**September 13 2026**
+## 4. Business Data Management (DS Diploma)
+
+**Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
 **Above to be attended in person at designated centres.**
 
@@ -2117,7 +2101,7 @@ Overall score for eligible students:
 
 (Though the W11/W12 assignment score is not included in GAA, W11/W12 contents will be included for the final exam. Hence, please practice and submit W11/W12 assignment).
 
-# 5. Business Analytics (Diploma in DS)
+## 5. Business Analytics (Diploma in DS)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -2182,7 +2166,7 @@ A = Sum of the Best 2 out of (Assignment 1, Assignment 2, Assignment 3)
   </tbody>
 </table>
 
-# 6. Tools in Data Science (Diploma in DS) [Co-
+## 6. Tools in Data Science (Diploma in DS)
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ... 16/40
 
@@ -2195,7 +2179,7 @@ Report abuse Learn more
 # BS-DS_ May 2026 Grading document (Student)
 Updated automatically every 5 minutes
 
-## Academic policies
+### Academic policies
 
 1. The Tools in Data Science portal has all the course content: Graded Assignments, Projects and ROE links. The Seek Portal is not used for submissions.
 
@@ -2248,7 +2232,7 @@ Before registering for TDS, please attempt the **Entrance Exam** at **https://ex
 
 <mark>**Final course score T = 0.2 GAA + 0.2 ROE + 0.2 P1 + 0.2 P2 + 0.2 F**</mark>
 
-# 7. Programming Data structures and algorithms using Python (PDSA) - Diploma in Programming
+## 7. Programming Data structures and algorithms using Python (PDSA) - Diploma in Programming
 
 **Weekly assignments:** Mix of autograded assignment and Programming assignments
 
@@ -2301,9 +2285,9 @@ OP = Score in Online proctored remote exam
 F = score in final exam
 **T = 0.05GAA + 0.2OP + 0.45F + max (0.2max(Qz1, Qz2), (0.10Qz1+0.20Qz2 ))**
 
-# 8. Database management system (DBMS) -
+## 8. Database management system (DBMS) -
 
-## Diploma in Programming
+### Diploma in Programming
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -2479,7 +2463,7 @@ BS-DS_ May 2026 Grading document (Student) Updated automatically every 5 minutes
   </tbody>
 </table>
 
-# 9. Application development - 1 (Diploma in programming)
+## 9. Application development - 1 (Diploma in programming)
 
 **Quiz 1**: July 19 2026
 **Quiz 2**: August 16 2026
@@ -2533,7 +2517,7 @@ Google Docs logo Published using Google Docs Report abuse Learn more
 
 **Final course score T = 0.05 GLA + max (0.6F + 0.25max(Qz1, Qz2), 0.4F + 0.25Qz1 + 0.3Qz2)**
 
-# 10. Programming concepts using Java (Diploma in programming)
+## 10. Programming concepts using Java (Diploma in programming)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -2744,7 +2728,7 @@ BPT 4 - August 14, 2026
 
 Will be conducted in the course VM - Each BPT has 4 Questions
 
-## Repeat_OPPE Criteria
+### Repeat_OPPE Criteria
 **(w.e.f from Jan 2026 term) [updated on Jan 05, 2026]**
 **Students who were OPPE eligible and received an I_OP in the Jan 2026 term, and have registered as Repeat OPPE for the May 2026 term, will continue to be considered eligible for OPPE in May 2026. However, students who were marked OPPE Ineligible with I_OP or I_Both and have registered for the respective course as Repeat OPPE or Repeat OPPE & End Term must regain OPPE eligibility in the May 2026 term by submitting the required assignments and OPPE SCT. If OPPE eligibility is not attained, the OPPE will not be scheduled and a U grade will be awarded for the May 2026 term.**
 
@@ -2752,13 +2736,13 @@ Will be conducted in the course VM - Each BPT has 4 Questions
 **SCT for OPPE and exam day rules:**
 https://docs.google.com/document/d/e/2PACX-1vS4Hhh4MsKD2WL8_D26Vw2WJKw0CBtPihZyKrnEM_kefRXm_O75GqTcJA6IR0X_xCiVL5gUi5y6_bjw/pub
 
-## Eligibility to attend the end term exam:
+### Eligibility to attend the end term exam:
 Average of the best 5 out of the first 7 weekly assessments (objective and programming) scores >= 40/100 AND OPPE should be eligible
 
-## Eligibility to get the course grade:
+### Eligibility to get the course grade:
 Attending the end semester exam AND programming exam (OPPE) score >= 40/100
 
-## There will be ONE OPPE based on weeks 1-9.
+### There will be ONE OPPE based on weeks 1-9.
 Students have to mandatorily attend the OPPE on the first date.
 
 * If you fail in this, you get a chance to reappear the next weekend. So you get 2 chances to attempt the exam.
@@ -2952,7 +2936,7 @@ Overall score for eligible students:
 
 ## Project Courses:
 
-Project courses are now for 2 credits each - BDM, MLP, App Dev 1, App Dev 2, DI-GenAi project.
+Project courses are now for 2 credits each - BDM, MLP, App Dev 1, App Dev 2, DL-GenAI project.
 
 The Project courses are not part of CCC. The CCC is only for theory courses.
 
@@ -2992,7 +2976,7 @@ Submission deadline :
   </tbody>
 </table>
 
-## FOR, MAD1, MAD2 PROJECTS:
+### MAD1, MAD2 PROJECTS:
 
 <table>
   <thead>
@@ -3034,7 +3018,7 @@ Updated automatically every 5 minutes
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ-A9dMIXVrfe069kqUkplPMRAiZBBIMJcp9XTCR/pub
 
-## MAD I Project
+### MAD I Project
 
 **Project Document:**
 https://docs.google.com/document/d/e/2PACX-1vR9pOLPvPzsxqhtrmtLi8GAV2j2JxpisWkIHCjEb8WuYrgm4ZPq8S_Sor-MygixO4hvGcPvO6Ei_W/pub
@@ -3042,7 +3026,7 @@ https://docs.google.com/document/d/e/2PACX-1vR9pOLPvPzsxqhtrmtLi8GAV2j2JxpisWkIH
 **Project statement - Trekking Management Application:**
 https://docs.google.com/document/d/e/2PACX-1vQvqzWz2tFt96B8VApnHqWqIP3LtPDbnXwApYr8VOffLCm_Zh2JuTa51z7d1CNJbrZKC0oWPredYcV/pub
 
-## MAD II Project
+### MAD II Project
 
 **Project document:**
 https://docs.google.com/document/d/e/2PACX-1vTKQBIsllAp4VUq_rST3_rbpMSoADyfb3agZ1E-jrGQxMeN2IBNOXu3GS0mchzRWaxWa204q52tbFYA/pub
@@ -3055,11 +3039,11 @@ https://docs.google.com/document/d/e/2PACX-1vTcayCKq8OPAVeTZHXNwCXxvJfiQRCmxiigX
 
 **BDM Project: BDM PROJECT SUBMISSION TIMELINE**
 
-## Deep learning and Generative AI Project
+### Deep learning and Generative AI Project
 
 https://docs.google.com/document/d/e/2PACX-1vTTorjQe5LH-TP_c0x-iDjdm-zX30uvJ3jv_QKtDvGsVoQydTkCWsfKwTUtCQv5syWsnSxmN4W3KFzE/pub_
 
-## Rules regarding project fees:
+### Rules regarding project fees:
 
 The fee paid for each of the 4 projects is valid for 2 terms. Please read this carefully so that you register properly.
 
@@ -3118,7 +3102,7 @@ who will be entering Degree level in the Sep 2026 term. **Without completing the
 
 **Students are requested to complete the projects at least two terms before their diploma completion term i.e DO NOT REGISTER OR HAVE PROJECTS ALONE LEFT IN YOUR LAST TERM OF DIPLOMA.**
 
-## Very important:
+### Very important:
 
 1. <u>Viva policy for MLP, DL&GEN AI</u>, <u>Viva Policy for Appdev</u>
 
@@ -3187,7 +3171,7 @@ It is important you learn more on programming and data science outside of what t
 
 4. Please do not share your assignments with others before the deadlines. If similarities are found between submissions, all will be penalised irrespective of who did it first and who shared it with whom.
 
-## 1. Software Testing
+# 1. Software Testing
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3204,7 +3188,7 @@ Qz2 = score in Quiz II (0, if not attempted)
 F - score in End Term exam
 **T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2**
 
-## 2. Software Engineering
+# 2. Software Engineering
 
 **Quiz 1**: No Quiz **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3269,7 +3253,7 @@ BS-DS_ May 2026 Grading document (Student)
 
 Updated automatically every 5 minutes
 
-## 3. Deep Learning
+# 3. Deep Learning
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -3296,7 +3280,7 @@ F - score in End Term exam
 
 **T = 0.05GAA + 0.25Qz1 + 0.25Qz2 + 0.45F**
 
-## 4. AI: Search Methods for Problem Solving
+# 4. AI: Search Methods for Problem Solving
 
 **Academic policies**
 
@@ -3339,7 +3323,7 @@ Programming Assignment 1 will be released between Quiz 1 and Quiz 2.
 
 The dates will be announced in the forum. This assignment will be evaluated offline.
 
-## 5. Strategies for Professional Growth
+# 5. Strategies for Professional Growth
 
 **Academic policies**
 
@@ -3407,7 +3391,7 @@ Project:
 More details about the Group Project will be given in the course.
 Bonus marks for additional activities may be awarded at the discretion of faculty or instructor, provided the student passes the course.
 
-## 6. Programming in C
+# 6. Programming in C
 
 **Quiz 1: July 19 2026** **Quiz 2: No Quiz 2** **End term: September 13 2026**
 **Above to be attended in person at designated centres**
@@ -3516,6 +3500,9 @@ Google Docs icon Published using Google Docs
 
 Updated automatically every 5 minutes
 
+# 9. Deep Learning Practice
+
+**Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 <span style="color: red">Above to be attended in person at designated centres.</span>
 
 Quiz1 - based on content taught by Prof Mitesh (Based on weeks 1-4)
@@ -3721,7 +3708,7 @@ Qz2 = score in Quiz II (0, if not attempted), Syllabus: Week 5-8
 F = score in final exam, Syllabus: Week 1-12
 **T = 0.075 GAA + 0.025 GRPA + 0.25Qz1 + 0.25Qz2 + 0.4F**
 
-## 13.Market Research
+# 13.Market Research
 
 **Quiz 1:** July 19 2026 **Quiz 2:** August 16 2026 **End term:** September 13 2026
 
@@ -3752,7 +3739,7 @@ Overall score for eligible students:
 **Case release date:** YTD
 **Case presentation:** Depending on numbers, if needed can extend one more day for presentation.
 
-## 14.Managerial Economics
+# 14.Managerial Economics
 
 **Quiz 1:** July 19 2026 **Quiz 2:** August 16 2026 **End term:** September 13 2026
 
@@ -3773,7 +3760,7 @@ F = score in final exam
 
 **T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2**
 
-## 15. MLOps (Machine Learning Operations)
+# 15. MLOps (Machine Learning Operations)
 
 **Quiz 1:** NA **Quiz 2:** NA **End term:** September 13 2026
 
@@ -3981,7 +3968,7 @@ Qz2 = score in Quiz II (0, if not attempted)
 F - score in End Term exam
 T = 0.2 GAA + 0.3F + 0.25Qz1 + 0.25Qz2
 
-## 20. Computer Systems Design
+# 20. Computer Systems Design
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3999,7 +3986,7 @@ F = score in final exam
 
 T = 0.1GAA + 0.4F + 0.2Qz1 + 0.25Qz2 + 0.05 circuit verse assignment
 
-## 21. Game Theory and Strategy
+# 21. Game Theory and Strategy
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -4021,7 +4008,7 @@ F = score in final exam
 
 T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2
 
-## 22. Algorithms for Data Science (ADS)
+# 22. Algorithms for Data Science (ADS)
 
 **Quiz 1**: NA **Quiz 2**: August 16 2026 **End term**: September 13 2026
 

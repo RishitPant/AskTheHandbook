@@ -1,0 +1,37 @@
+[
+  {
+    "id": "fee_001",
+    "question": "What is the foundation level fee for students joining from Jan 2026 onwards?",
+    "expected_keywords": ["48,000", "48000"],
+    "source": "student-handbook.md",
+    "category": "fees"
+  },
+  {
+    "id": "fee_002",
+    "question": "What is the total fee for Foundation + Two Diplomas under the revised fee structure?",
+    "expected_keywords": ["210,000", "210000"],
+    "source": "student-handbook.md",
+    "category": "fees"
+  },
+  {
+    "id": "fee_003",
+    "question": "What is the total fee for the BS Degree under the revised fee structure?",
+    "expected_keywords": ["386,000", "450,000"],
+    "source": "student-handbook.md",
+    "category": "fees"
+  },
+  {
+    "id": "fee_004",
+    "question": "What is the foundation level fee for students who joined the program before Sep 2025?",
+    "expected_keywords": ["32,000", "32000"],
+    "source": "student-handbook.md",
+    "category": "fees"
+  },
+  {
+    "id": "fee_005",
+    "question": "What fee waiver does an SC/ST student with family income above 5 LPA get?",
+    "expected_keywords": ["50%"],
+    "source": "student-handbook.md",
+    "category": "fees"
+  }
+]
