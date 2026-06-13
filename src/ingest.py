@@ -10,8 +10,8 @@ DB_DIR = "db"
 COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
-CHUNK_SIZE = 1500
-CHUNK_OVERLAP = 150
+CHUNK_SIZE = 2000
+CHUNK_OVERLAP = 200
 
 HEADERS_TO_SPLIT = [
     ("#",   "h1"),
@@ -76,12 +76,17 @@ def clean_markdown(raw_text: str) -> str:
         # Google Docs URLs
         r'https://docs\.google\.com/\S+',
 
-        # Bare page-number artifacts: "  38/66  " or "10/66" on their own
-        r'(?<!\d)\d{1,3}/\d{2,3}(?!\d)(?=\s|$)',
+        # Bare page-number artifacts: "  38/66  " or "10/66" on their own line
+        # (excludes /100 since that's always a score threshold, e.g. "40/100")
+        r'(?<![\d>=])\b\d{1,3}/(?!100\b)\d{2,3}\b(?!\d)\s*(?=\n|$)',
+
+        r'^#{1,3}\s*BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
+        r'^BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
+        r'^Updated\s+automatically\s+every\s+\d+\s+minutes\s*$',
     ]
     text = raw_text
     for pattern in noise_patterns:
-        text = re.sub(pattern, '', text, flags=re.IGNORECASE)
+        text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.MULTILINE)
 
     text = html_tables_to_markdown(text)
     # Collapse runs of whitespace left behind by removals
@@ -107,6 +112,26 @@ def load_and_split(md_path: Path) -> list[Document]:
         separators=["\n\n", "\n", " ", ""],
     )
     final_docs = char_splitter.split_documents(header_docs)
+
+    # Prepend the section's header path to every chunk's content.
+    # Without this, a chunk containing e.g. a course's T formula but not
+    # the course name (because the header line landed in an earlier chunk)
+    # won't match queries that mention the course name — for either the
+    # vector embedding or BM25.
+    for doc in final_docs:
+        header_parts = [
+            doc.metadata.get("h1", ""),
+            doc.metadata.get("h2", ""),
+            doc.metadata.get("h3", ""),
+        ]
+        header_path = " > ".join(p for p in header_parts if p)
+        if header_path:
+            doc.page_content = (
+    f"[Course: {header_path}]\n"
+    f"{doc.page_content}\n"
+    f"[/Course: {header_path}]"
+)
+
 
     for doc in final_docs:
         doc.metadata["source"] = md_path.name

@@ -7,7 +7,6 @@ sentence-transformers
 faiss-cpu
 chromadb
 rank-bm25
-groq
 pyyaml
 datasets
 ragas
@@ -24,3 +23,4 @@ deepeval
 langchain_chroma
 langchain_huggingface
 langchain-classic
+langchain_groq
