@@ -1,7 +1,8 @@
 import os
 import sys
 from dotenv import load_dotenv
-
+from pathlib import Path
+import yaml
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
@@ -14,23 +15,17 @@ if not os.getenv("GROQ_API_KEY"):
     print("ERROR: GROQ_API_KEY environment variable not found.")
     sys.exit(1)
 
-SYSTEM_PROMPT = """
-You are the official academic advisor AI for the IITM BS Degree Programme. Answer student questions accurately, professionally, and concisely.
+PROMPTS_PATH = Path(__file__).parent.parent / "prompts.yaml"
+if not PROMPTS_PATH.exists():
+    print(f"ERROR: prompts.yaml not found at {PROMPTS_PATH}")
+    sys.exit(1)
 
-Follow these strict rules:
-1. **Strict Grounding:** Answer ONLY using the provided Context Documents. If the answer is not explicitly stated, state that you do not have the information. Do not guess or hallucinate.
-2. **Data Extraction:** Carefully align rows and columns when extracting tabular data.
-3. **Citations:** Always cite the source document name when stating factual rules or fees (e.g., "According to student-handbook.md...").
-4. **Definitions First:** Define any acronyms, fee names, or policy terms before giving specific details. Never omit context that changes how a number or fact should be interpreted.
-5. **Redundancy Handling:** If the context contains numerically-related figures across different sections that might represent the same fee, explicitly surface this potential overlap rather than stating them as definitively separate.
-6. **Course Focus:** Detail only the single most relevant course. If courses with similar names exist, mention them in one brief line at the end as alternatives; do not provide their grading details unless explicitly requested.
-"""
+_prompts = yaml.safe_load(PROMPTS_PATH.read_text(encoding="utf-8"))
+PROMPTS_VERSION = _prompts.get("version", "unknown")
+SYSTEM_PROMPT   = _prompts["system"]
+HUMAN_PROMPT    = _prompts["H"]
 
-HUMAN_PROMPT = """CONTEXT DOCUMENTS:
-{context}
-
-STUDENT QUESTION:
-{question}"""
+print(f"Loaded prompts version: {PROMPTS_VERSION}")
 
 prompt = ChatPromptTemplate.from_messages([
     ("system", SYSTEM_PROMPT),
@@ -52,8 +47,9 @@ class Generator:
         print("Initializing retrieval system...")
         self.retriever = Retriever()
 
+        MODEL = os.getenv("RAG_MODEL", "llama-3.3-70b-versatile")
         llm = ChatGroq(
-            model="llama-3.3-70b-versatile", #llama-3.3-70b-versatile
+            model=MODEL, #llama-3.3-70b-versatile
             temperature=0.1,
             streaming=True,
         )
