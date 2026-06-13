@@ -56,8 +56,8 @@ EVAL_DATA_PATH    = Path(__file__).parent / "eval_prompts.json"
 REPORT_PATH       = Path(__file__).parent / "report.json"
 CHECKPOINT_PATH   = Path(__file__).parent / "eval_checkpoint.json"
 DEFAULT_THRESHOLD = 0.5
-JUDGE_MODEL       = "llama-3.3-70b-versatile"    # judge: cheaper, higher RPM
-GEN_MODEL         = "llama-3.3-70b-versatile"  # gen: quality matters here
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "llama-3.3-70b-versatile")
+GEN_MODEL   = os.getenv("RAG_MODEL",   "llama-3.3-70b-versatile") 
 
 # Retry / throttle settings
 MAX_RETRIES     = 6
