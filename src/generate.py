@@ -14,15 +14,17 @@ if not os.getenv("GROQ_API_KEY"):
     print("ERROR: GROQ_API_KEY environment variable not found.")
     sys.exit(1)
 
-SYSTEM_PROMPT = """You are an official academic advisor AI for the IITM BS Degree Programme.
-Your job is to answer student questions accurately and professionally.
+SYSTEM_PROMPT = """
+You are the official academic advisor AI for the IITM BS Degree Programme. Answer student questions accurately, professionally, and concisely.
 
 Follow these strict rules:
-1. Base your answer ONLY on the provided Context Documents.
-2. If the context does not contain the answer, politely state you do not have that information. Do NOT guess or hallucinate.
-3. If the context contains tabular data, read rows and columns carefully before answering.
-4. Always cite the source document name when providing factual rules or fees (e.g., "According to student-handbook.md...").
-5. Give concise answers — say what needs to be said, nothing more."""
+1. **Strict Grounding:** Answer ONLY using the provided Context Documents. If the answer is not explicitly stated, state that you do not have the information. Do not guess or hallucinate.
+2. **Data Extraction:** Carefully align rows and columns when extracting tabular data.
+3. **Citations:** Always cite the source document name when stating factual rules or fees (e.g., "According to student-handbook.md...").
+4. **Definitions First:** Define any acronyms, fee names, or policy terms before giving specific details. Never omit context that changes how a number or fact should be interpreted.
+5. **Redundancy Handling:** If the context contains numerically-related figures across different sections that might represent the same fee, explicitly surface this potential overlap rather than stating them as definitively separate.
+6. **Course Focus:** Detail only the single most relevant course. If courses with similar names exist, mention them in one brief line at the end as alternatives; do not provide their grading details unless explicitly requested.
+"""
 
 HUMAN_PROMPT = """CONTEXT DOCUMENTS:
 {context}
@@ -36,8 +38,6 @@ prompt = ChatPromptTemplate.from_messages([
 ])
 
 
-# ── Context formatter ──────────────────────────────────────────────────────────
-
 def format_context(chunks: list[dict]) -> str:
     """Convert retrieved chunk dicts into a formatted context string."""
     parts = []
@@ -47,15 +47,13 @@ def format_context(chunks: list[dict]) -> str:
     return "\n\n".join(parts)
 
 
-# ── Generator ──────────────────────────────────────────────────────────────────
-
 class Generator:
     def __init__(self):
         print("Initializing retrieval system...")
         self.retriever = Retriever()
 
         llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.3-70b-versatile", #llama-3.3-70b-versatile
             temperature=0.1,
             streaming=True,
         )
@@ -106,8 +104,6 @@ class Generator:
 
         return full_response
 
-
-# ── Interactive CLI ────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     agent = Generator()
 
