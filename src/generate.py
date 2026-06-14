@@ -8,6 +8,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from retrieve import Retriever
+from tracing import traced_retrieve, get_callbacks, langfuse, LANGFUSE_ENABLED, observe
+from langfuse.openai import OpenAI
 
 load_dotenv()
 
@@ -48,34 +50,19 @@ class Generator:
         self.retriever = Retriever()
 
         MODEL = os.getenv("RAG_MODEL", "llama-3.3-70b-versatile")
-        llm = ChatGroq(
-            model=MODEL, #llama-3.3-70b-versatile
-            temperature=0.1,
-            streaming=True,
+        self.model_name = MODEL
+        self.llm_client = OpenAI(
+            base_url="https://api.groq.com/openai/v1",
+            api_key=os.environ.get("GROQ_API_KEY")
         )
 
-        # LCEL chain:
-        # 1. Retrieve chunks for the question
-        # 2. Format them into a context string
-        # 3. Pass context + question into the prompt
-        # 4. Send to LLM and parse output
-        self.chain = (
-            {
-                "context":  RunnableLambda(lambda q: format_context(self.retriever.retrieve(q))),
-                "question": RunnablePassthrough(),
-            }
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-
-        # Keep a reference so answer() can show sources
         self._last_chunks: list[dict] = []
 
+    @observe(name="rag_chat_turn")
     def answer(self, query: str, top_n: int = 4) -> str:
         """Run the full RAG chain and stream the answer to stdout."""
         print(f"\n🔍 Retrieving context for: '{query}'...")
-        self._last_chunks = self.retriever.retrieve(query, top_n=top_n)
+        self._last_chunks = traced_retrieve(self.retriever, query, top_n=top_n)
 
         if not self._last_chunks:
             msg = "I couldn't find any official documentation related to that question."
@@ -84,8 +71,21 @@ class Generator:
 
         print("🧠 Generating answer...\n")
 
+        context = format_context(self._last_chunks)
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": HUMAN_PROMPT.format(context=context, question=query)}
+        ]
+
         full_response = ""
-        for token in self.chain.stream(query):
+        stream = self.llm_client.chat.completions.create(
+            model=self.model_name,
+            messages=messages,
+            temperature=0.1,
+            stream=True,
+        )
+        for chunk in stream:
+            token = chunk.choices[0].delta.content or ""
             print(token, end="", flush=True)
             full_response += token
 
@@ -97,7 +97,7 @@ class Generator:
             if label not in seen:
                 print(label)
                 seen.add(label)
-
+        langfuse.flush()
         return full_response
 
 if __name__ == "__main__":

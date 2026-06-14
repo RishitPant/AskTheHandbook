@@ -1,22 +1,3 @@
-"""
-evaluate.py — Offline evaluation using DeepEval
-for the IITM BS Degree RAG System
-
-Judge LLM : Groq (llama-3.1-8b-instant) via DeepEvalBaseLLM wrapper
-Metrics    :
-  - FaithfulnessMetric        — are answer claims grounded in retrieved chunks?
-  - AnswerRelevancyMetric     — is the answer relevant to the question?
-  - ContextualPrecisionMetric — are the top-ranked chunks the most useful ones?
-
-Plus a fast keyword-hit check (no LLM needed) as a CI gate.
-
-Usage:
-  python eval/evaluate.py                          # full DeepEval run
-  python eval/evaluate.py --category fees          # one category only
-  python eval/evaluate.py --threshold 0.75         # custom pass threshold
-  python eval/evaluate.py --no-deepeval            # keyword-only, fast CI mode
-  python eval/evaluate.py --save-report            # write results to eval/report.json
-"""
 
 import os
 import sys
