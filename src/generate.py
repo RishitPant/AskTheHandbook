@@ -23,7 +23,7 @@ if not PROMPTS_PATH.exists():
 _prompts = yaml.safe_load(PROMPTS_PATH.read_text(encoding="utf-8"))
 PROMPTS_VERSION = _prompts.get("version", "unknown")
 SYSTEM_PROMPT   = _prompts["system"]
-HUMAN_PROMPT    = _prompts["H"]
+HUMAN_PROMPT    = _prompts["human"]
 
 print(f"Loaded prompts version: {PROMPTS_VERSION}")
 
