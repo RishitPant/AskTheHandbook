@@ -24,3 +24,5 @@ langchain_chroma
 langchain_huggingface
 langchain-classic
 langchain_groq
+langfuse
+openai
