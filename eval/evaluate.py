@@ -26,6 +26,7 @@ import time
 import re
 from datetime import datetime
 from pathlib import Path
+import yaml
 
 from dotenv import load_dotenv
 from groq import Groq
@@ -58,6 +59,16 @@ CHECKPOINT_PATH   = Path(__file__).parent / "eval_checkpoint.json"
 DEFAULT_THRESHOLD = 0.5
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", "llama-3.3-70b-versatile")
 GEN_MODEL   = os.getenv("RAG_MODEL",   "llama-3.3-70b-versatile") 
+
+PROMPTS_PATH = ROOT / "prompts.yaml"
+if not PROMPTS_PATH.exists():
+    print(f"ERROR: prompts.yaml not found at {PROMPTS_PATH}")
+    sys.exit(1)
+
+_prompts        = yaml.safe_load(PROMPTS_PATH.read_text(encoding="utf-8"))
+PROMPTS_VERSION = _prompts.get("version", "unknown")
+EVAL_SYSTEM     = _prompts["eval_system"]
+HUMAN_TEMPLATE  = _prompts["human"]
 
 # Retry / throttle settings
 MAX_RETRIES     = 6
@@ -175,25 +186,19 @@ class GroqJudge(DeepEvalBaseLLM):
 # ── Answer generator ───────────────────────────────────────────────────────────
 
 def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
-    """Generate a grounded answer from retrieved chunks using Groq."""
     context_parts = [
         f"[{c['source']} — Section: {c['page']}]\n{c['text']}"
         for c in chunks
     ]
-    prompt = (
-        "You are an official academic advisor AI for the IITM BS Degree Programme.\n"
-        "Answer strictly from context. Be concise and factual.\n"
-        "If missing from context, state: I don't have that information.\n"
-        "CONTEXT:\n"
-        + "\n---\n".join(context_parts)
-        + f"\n\nSTUDENT QUESTION: {question}\n"
-    )
+    context     = "\n---\n".join(context_parts)
+    user_prompt = HUMAN_TEMPLATE.format(context=context, question=question)
+
     response = groq_call_with_retry(
         client.chat.completions.create,
         model=GEN_MODEL,
         messages=[
-            {"role": "system", "content": "Answer only from the provided context."},
-            {"role": "user",   "content": prompt},
+            {"role": "system", "content": EVAL_SYSTEM},
+            {"role": "user",   "content": user_prompt},
         ],
         temperature=0.0,
         max_tokens=150,
@@ -251,6 +256,8 @@ def run_evaluation(
         print(f"  Total questions : {len(eval_data)}")
 
     print(f"  Judge model     : {JUDGE_MODEL}")
+    print(f"  Gen model       : {GEN_MODEL}")
+    print(f"  Prompts version : {PROMPTS_VERSION}")
     print(f"  DeepEval        : {'enabled' if use_deepeval else 'disabled (keyword-only)'}")
     print(f"  Threshold       : {threshold}\n")
 
@@ -416,6 +423,8 @@ def run_evaluation(
         report = {
             "timestamp":        datetime.now().isoformat(),
             "judge_model":      JUDGE_MODEL,
+            "gen_model":        GEN_MODEL,
+            "prompts_version":  PROMPTS_VERSION,
             "threshold":        threshold,
             "category":         category,
             "num_questions":    len(eval_data),
