@@ -18,7 +18,7 @@ if LANGFUSE_ENABLED:
     langfuse = get_client()
     langfuse_handler = CallbackHandler()
     observe = _observe
-    print(f"📡 Langfuse tracing enabled → {os.getenv('LANGFUSE_HOST')}")
+    print(f"Langfuse tracing enabled → {os.getenv('LANGFUSE_HOST')}")
 else:
     # No-op decorator so traced_retrieve still works without Langfuse
     def observe(*args, **kwargs):
