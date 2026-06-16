@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AskTheHandbook — IITM BS Degree Assistant</title>
+<style>
+  :root {
+    --ink: #1b1a17;
+    --paper: #f6f3ea;
+    --rule: #d8d2c2;
+    --accent: #8a3b2b;
+    --accent-soft: #f0e2dc;
+    --mono: "IBM Plex Mono", "SF Mono", Menlo, monospace;
+    --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    border-bottom: 1px solid var(--rule);
+    padding: 1.1rem 1.5rem;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  header h1 {
+    font-size: 1.15rem;
+    margin: 0;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  header span {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: #6b6457;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.5rem 1.25rem 8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+  }
+  .empty {
+    margin-top: 3rem;
+    color: #6b6457;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-left: 2px solid var(--rule);
+    padding-left: 1rem;
+  }
+  .msg { line-height: 1.65; font-size: 1rem; }
+  .msg.user {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .msg.user::before { content: "Q. "; }
+  .msg.answer { white-space: pre-wrap; }
+  .sources {
+    margin-top: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: #6b6457;
+    border-top: 1px dashed var(--rule);
+    padding-top: 0.5rem;
+  }
+  .sources div { margin-top: 0.2rem; }
+  form {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, var(--paper) 60%, transparent);
+    padding: 1.5rem 1.25rem 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
+  .input-row {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    gap: 0.6rem;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+  textarea {
+    flex: 1;
+    border: none;
+    resize: none;
+    font-family: var(--serif);
+    font-size: 0.95rem;
+    line-height: 1.4;
+    padding: 0.3rem 0.4rem;
+    background: transparent;
+    color: var(--ink);
+    outline: none;
+    max-height: 6rem;
+  }
+  button {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0 1.1rem;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .cursor {
+    display: inline-block;
+    width: 0.5em;
+    height: 1em;
+    background: var(--accent);
+    vertical-align: -0.15em;
+    animation: blink 1s step-start infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+  <header>
+    <h1>AskTheHandbook</h1>
+    <span>IITM BS Degree · Grounded RAG Assistant</span>
+  </header>
+
+  <main id="thread">
+    <div class="empty" id="empty-state">
+      Ask about fees, grading policy, exam schedules, eligibility, or academic structure.
+      Answers are grounded strictly in the official student handbook and grading
+      document, with sources cited below each response.
+    </div>
+  </main>
+
+  <form id="form">
+    <div class="input-row">
+      <textarea id="question" rows="1" placeholder="e.g. What is the revised fee for the foundation level?" required></textarea>
+      <button id="submit" type="submit">Ask</button>
+    </div>
+  </form>
+
+<script>
+const thread = document.getElementById('thread');
+const emptyState = document.getElementById('empty-state');
+const form = document.getElementById('form');
+const input = document.getElementById('question');
+const submitBtn = document.getElementById('submit');
+
+input.addEventListener('input', () => {
+  input.style.height = 'auto';
+  input.style.height = Math.min(input.scrollHeight, 96) + 'px';
+});
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const question = input.value.trim();
+  if (!question) return;
+
+  emptyState.remove();
+  input.value = '';
+  input.style.height = 'auto';
+  submitBtn.disabled = true;
+
+  const userDiv = document.createElement('div');
+  userDiv.className = 'msg user';
+  userDiv.textContent = question;
+  thread.appendChild(userDiv);
+
+  const answerDiv = document.createElement('div');
+  answerDiv.className = 'msg answer';
+  const cursor = document.createElement('span');
+  cursor.className = 'cursor';
+  answerDiv.appendChild(cursor);
+  thread.appendChild(answerDiv);
+  window.scrollTo(0, document.body.scrollHeight);
+
+  try {
+    const res = await fetch('/api/chat/stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const payload = JSON.parse(line.slice(6));
+
+        if (payload.token) {
+          fullText += payload.token;
+          answerDiv.textContent = fullText;
+          answerDiv.appendChild(cursor);
+          window.scrollTo(0, document.body.scrollHeight);
+        }
+
+        if (payload.done) {
+          cursor.remove();
+          if (payload.sources && payload.sources.length) {
+            const srcDiv = document.createElement('div');
+            srcDiv.className = 'sources';
+            payload.sources.forEach(s => {
+              const line = document.createElement('div');
+              line.textContent = `${s.source} — ${s.section}`;
+              srcDiv.appendChild(line);
+            });
+            answerDiv.appendChild(srcDiv);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    cursor.remove();
+    answerDiv.textContent = 'Something went wrong reaching the assistant. Please try again.';
+  } finally {
+    submitBtn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
