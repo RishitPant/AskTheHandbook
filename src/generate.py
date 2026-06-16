@@ -92,8 +92,7 @@ class Generator:
         )
         for chunk in stream:
             token = chunk.choices[0].delta.content or ""
-            print(token, end="", flush=True)
-            full_response += token
+            yield token
 
         print("\n\n" + "-" * 60)
         print("SOURCES USED:")
