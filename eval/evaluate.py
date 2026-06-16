@@ -196,7 +196,7 @@ def run_evaluation(
     save_report: bool  = True,
 ):
     print("\n" + "=" * 65)
-    print("  IITM BS RAG — DEEPEVAL EVALUATION")
+    print("  AskTheHandbook — DEEPEVAL EVALUATION")
     print("=" * 65)
 
     if not EVAL_DATA_PATH.exists():
@@ -410,7 +410,7 @@ def run_evaluation(
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Evaluate IITM BS RAG with DeepEval")
+    parser = argparse.ArgumentParser(description="Evaluate AskTheHandbook with DeepEval")
     parser.add_argument("--category",    type=str,   default=None,
                         help="Filter eval_prompts.json by category field")
     parser.add_argument("--threshold",   type=float, default=DEFAULT_THRESHOLD,
