@@ -22,10 +22,9 @@ from deepeval.metrics import (
 )
 from deepeval.test_case import LLMTestCase
 
-# ── Path setup ─────────────────────────────────────────────────────────────────
 ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT / "src"))
-from retrieve import Retriever  # noqa: E402
+from retrieve import Retriever
 
 load_dotenv()
 
@@ -58,16 +57,9 @@ BETWEEN_CALLS   = 3   # polite gap after every successful Groq gen call
 BETWEEN_METRICS = 4   # gap between each metric.measure() judge call
 
 
-# ── Retry helper ───────────────────────────────────────────────────────────────
+# ---- Retry helper ---- 
 
 def _parse_retry_delay(error: RateLimitError) -> float | None:
-    """
-    Extract the suggested wait time from a Groq 429 error message.
-    Groq says things like:
-      'Please try again in 760ms'
-      'Please try again in 1.2s'
-    We parse that and add a small buffer.
-    """
     msg = str(error)
 
     # milliseconds: "760ms"
@@ -84,17 +76,6 @@ def _parse_retry_delay(error: RateLimitError) -> float | None:
 
 
 def groq_call_with_retry(fn, *args, **kwargs):
-    """
-    Call any Groq SDK function with automatic retry on 429 rate limits.
-    Reads the suggested delay from the error response when available,
-    otherwise falls back to exponential backoff.
-
-    Usage:
-        response = groq_call_with_retry(
-            client.chat.completions.create,
-            model=..., messages=..., ...
-        )
-    """
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             result = fn(*args, **kwargs)
@@ -110,7 +91,7 @@ def groq_call_with_retry(fn, *args, **kwargs):
             time.sleep(wait)
 
 
-# ── Groq wrapper for DeepEval ──────────────────────────────────────────────────
+# ── Groq wrapper for DeepEval 
 
 class GroqJudge(DeepEvalBaseLLM):
     """
@@ -119,10 +100,6 @@ class GroqJudge(DeepEvalBaseLLM):
     DeepEval calls generate() with either:
       - just a prompt string       → return a plain string
       - a prompt + Pydantic schema → return a parsed schema instance
-
-    The schema path is used for metric scoring (DeepEval asks the judge
-    to fill in a structured verdict JSON). We force json_object mode so
-    Groq always returns valid JSON for those calls.
     """
     def __init__(self, api_key: str, model_name: str = JUDGE_MODEL):
         self.api_key    = api_key
@@ -164,7 +141,7 @@ class GroqJudge(DeepEvalBaseLLM):
         return f"Groq/{self.model_name}"
 
 
-# ── Answer generator ───────────────────────────────────────────────────────────
+# ── Answer generator
 
 def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
     context_parts = [
@@ -187,7 +164,7 @@ def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
     return response.choices[0].message.content.strip()
 
 
-# ── Keyword hit ────────────────────────────────────────────────────────────────
+# ── Keyword hit
 
 def keyword_hit(answer: str, expected_keywords: list[str]) -> bool:
     """Check if any expected keyword appears in the answer (case-insensitive)."""
@@ -195,7 +172,7 @@ def keyword_hit(answer: str, expected_keywords: list[str]) -> bool:
     return any(kw.lower() in a for kw in expected_keywords)
 
 
-# ── Checkpoint helpers ─────────────────────────────────────────────────────────
+# ── Checkpoint helpers
 
 def _load_checkpoint() -> dict:
     """Return previously saved per-question scores, keyed by question id."""
@@ -211,7 +188,6 @@ def _save_checkpoint(data: dict) -> None:
     CHECKPOINT_PATH.write_text(json.dumps(data, indent=2))
 
 
-# ── Main evaluation ────────────────────────────────────────────────────────────
 
 def run_evaluation(
     category: str      = None,
@@ -246,7 +222,6 @@ def run_evaluation(
     retriever   = Retriever()
     groq_client = Groq(api_key=API_KEY)
 
-    # ── Phase 1: retrieve + generate ──────────────────────────────────────────
     print("\nPhase 1 — Retrieve & Generate\n" + "-" * 40)
 
     test_cases  : list[LLMTestCase] = []
@@ -280,7 +255,7 @@ def run_evaluation(
 
     kw_rate = sum(kw_hits) / len(kw_hits)
 
-    # ── Phase 2: DeepEval scoring ──────────────────────────────────────────────
+    # DeepEval scoring 
     results_by_metric   : dict[str, list[float]] = {}
     per_question_scores : list[dict]             = []
 
@@ -314,7 +289,6 @@ def run_evaluation(
             qid = item["id"]
             print(f"  [{i:02d}/{len(test_cases)}] {tc.input[:65]}")
 
-            # ── Resume: skip if already scored ──────────────────────────────
             if qid in checkpoint:
                 q_scores = checkpoint[qid]
                 print(f"    ↩️  skipped (checkpoint)\n")
@@ -353,7 +327,7 @@ def run_evaluation(
             _save_checkpoint(checkpoint)   # flush after every question
             print()
 
-    # ── Phase 3: Aggregate summary ─────────────────────────────────────────────
+    # Aggregate summary
     print("=" * 65)
     print("  AGGREGATE RESULTS")
     print("=" * 65)
@@ -388,7 +362,7 @@ def run_evaluation(
                 f" {f:>6.3f}  {r:>6.3f}  {p:>6.3f}"
             )
 
-    # ── CI gate ────────────────────────────────────────────────────────────────
+    # ── CI gate 
     if avg_faith is not None:
         gate_metric = min(kw_rate, avg_faith)
         gate_label  = f"min(keyword={kw_rate:.1%}, faithfulness={avg_faith:.3f})"
@@ -399,7 +373,7 @@ def run_evaluation(
     print(f"\n  Gate  : {gate_label}")
     print(f"  Score : {gate_metric:.3f}  (threshold: {threshold:.2f})")
 
-    # ── Optional JSON report ───────────────────────────────────────────────────
+    # ── Optional JSON report 
     if save_report:
         report = {
             "timestamp":        datetime.now().isoformat(),
@@ -422,7 +396,7 @@ def run_evaluation(
         REPORT_PATH.write_text(json.dumps(report, indent=2))
         print(f"\n  📄 Report saved → {REPORT_PATH}")
 
-    # ── Exit with CI-friendly code ─────────────────────────────────────────────
+    # Exit with CI-friendly code
     if gate_metric >= threshold:
         print(f"\n  ✅ PASSED — RAG quality is above threshold ({threshold:.0%})\n")
         if CHECKPOINT_PATH.exists():
@@ -435,7 +409,6 @@ def run_evaluation(
         sys.exit(1)
 
 
-# ── CLI ────────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evaluate IITM BS RAG with DeepEval")
     parser.add_argument("--category",    type=str,   default=None,
