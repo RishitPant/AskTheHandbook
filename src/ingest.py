@@ -1,9 +1,13 @@
+import os
 import re
 from pathlib import Path
+from dotenv import load_dotenv
 from langchain_core.documents import Document
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
+
+load_dotenv()
 
 DATA_DIR = Path("data")
 DB_DIR = "db"
@@ -12,6 +16,25 @@ EMBED_MODEL = "BAAI/bge-small-en-v1.5"
 
 CHUNK_SIZE = 2000
 CHUNK_OVERLAP = 200
+
+CHROMA_API_KEY = os.getenv("CHROMA_API_KEY")
+CHROMA_TENANT = os.getenv("CHROMA_TENANT")
+CHROMA_DATABASE = os.getenv("CHROMA_DATABASE")
+USE_CHROMA_CLOUD = bool(CHROMA_API_KEY)
+
+
+def get_chroma_client():
+    """Return a chromadb client — CloudClient if Chroma Cloud env vars are
+    set, otherwise a local PersistentClient writing to DB_DIR."""
+    import chromadb
+
+    if USE_CHROMA_CLOUD:
+        return chromadb.CloudClient(
+            api_key=CHROMA_API_KEY,
+            tenant=CHROMA_TENANT,
+            database=CHROMA_DATABASE,
+        )
+    return chromadb.PersistentClient(path=DB_DIR)
 
 HEADERS_TO_SPLIT = [
     ("#",   "h1"),
@@ -49,37 +72,15 @@ def html_tables_to_markdown(text: str) -> str:
 def clean_markdown(raw_text: str) -> str:
     noise_patterns = [
         r'\d{1,2}/\d{1,2}/\d{2,4},\s+\d{1,2}:\d{2}\s+[AP]M[^\n]*',
-
-        # Full footer form: "Google Docs  Published using Google Docs"
         r'Google Docs(?:\s+icon|\s+logo)?\s+Published using Google Docs[^\n]*',
-
-        # Fragment form that appears mid-chunk after splitting:
-        # "  10/66  info icon  Published using Google Docs  IITM BS Degree ..."
         r'\d+/\d+\s+info\s+icon\s+Published\s+using\s+Google\s+Docs[^\n]*',
-
-        # Standalone "Published using Google Docs" anywhere
         r'Published\s+using\s+Google\s+Docs[^\n]*',
-
-        # "info icon" artifact on its own or leading a sentence
         r'\binfo\s+icon\b[^\n]*',
-
-        # Document title trailers: "IITM BS Degree Programme - Student Handb..."
-        # These appear as orphaned suffixes after the noise strip above
         r'IITM\s+BS\s+Degree\s+Programme\s*[-–]\s*Student\s+Hand\w*[^\n]*',
-
-        # Report abuse / learn more footer
         r'Report\s+abuse\s+Learn\s+more[^\n]*',
-
-        # Auto-update notice
         r'Updated\s+automatically\s+every\s+\d+\s+minutes[^\n]*',
-
-        # Google Docs URLs
         r'https://docs\.google\.com/\S+',
-
-        # Bare page-number artifacts: "  38/66  " or "10/66" on their own line
-        # (excludes /100 since that's always a score threshold, e.g. "40/100")
         r'(?<![\d>=])\b\d{1,3}/(?!100\b)\d{2,3}\b(?!\d)\s*(?=\n|$)',
-
         r'^#{1,3}\s*BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
         r'^BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
         r'^Updated\s+automatically\s+every\s+\d+\s+minutes\s*$',
@@ -89,9 +90,8 @@ def clean_markdown(raw_text: str) -> str:
         text = re.sub(pattern, '', text, flags=re.IGNORECASE | re.MULTILINE)
 
     text = html_tables_to_markdown(text)
-    # Collapse runs of whitespace left behind by removals
-    text = re.sub(r'[ \t]{2,}', ' ', text)          # multiple spaces → single
-    text = re.sub(r'\n{3,}', '\n\n', text).strip()  # blank line runs → one
+    text = re.sub(r'[ \t]{2,}', ' ', text)
+    text = re.sub(r'\n{3,}', '\n\n', text).strip()
     return text
 
 
@@ -101,7 +101,7 @@ def load_and_split(md_path: Path) -> list[Document]:
 
     header_splitter = MarkdownHeaderTextSplitter(
         headers_to_split_on=HEADERS_TO_SPLIT,
-        strip_headers=False,        
+        strip_headers=False,
         return_each_line=False,
     )
     header_docs = header_splitter.split_text(cleaned)
@@ -113,11 +113,6 @@ def load_and_split(md_path: Path) -> list[Document]:
     )
     final_docs = char_splitter.split_documents(header_docs)
 
-    # Prepend the section's header path to every chunk's content.
-    # Without this, a chunk containing e.g. a course's T formula but not
-    # the course name (because the header line landed in an earlier chunk)
-    # won't match queries that mention the course name — for either the
-    # vector embedding or BM25.
     for doc in final_docs:
         header_parts = [
             doc.metadata.get("h1", ""),
@@ -127,11 +122,10 @@ def load_and_split(md_path: Path) -> list[Document]:
         header_path = " > ".join(p for p in header_parts if p)
         if header_path:
             doc.page_content = (
-    f"[Course: {header_path}]\n"
-    f"{doc.page_content}\n"
-    f"[/Course: {header_path}]"
-)
-
+                f"[Course: {header_path}]\n"
+                f"{doc.page_content}\n"
+                f"[/Course: {header_path}]"
+            )
 
     for doc in final_docs:
         doc.metadata["source"] = md_path.name
@@ -155,13 +149,15 @@ def build_index():
     if not all_docs:
         print("No valid documents found. Exiting.")
         return
-    
-    print(f"\nEmbedding and indexing {len(all_docs)} chunks into ChromaDB...")
 
+    target = "Chroma Cloud" if USE_CHROMA_CLOUD else f"local dir '{DB_DIR}'"
+    print(f"\nEmbedding and indexing {len(all_docs)} chunks into {target}...")
+
+    client = get_chroma_client()
     vectorstore = Chroma.from_documents(
         documents=all_docs,
         embedding=embeddings,
-        persist_directory=DB_DIR,
+        client=client,
         collection_name=COLLECTION_NAME,
     )
 
