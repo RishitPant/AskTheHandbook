@@ -55,16 +55,25 @@ class Generator:
 
         self._last_chunks: list[dict] = []
 
+    def get_sources(self) -> list[dict]:
+        seen = set()
+        sources = []
+        for c in self._last_chunks:
+            key = (c['source'], c['page'])
+            if key not in seen:
+                seen.add(key)
+                sources.append({"source": c['source'], "section": c['page']})
+        return sources
+
     @observe(name="rag_chat_turn")
-    def answer(self, query: str, top_n: int = 4) -> str:
+    def answer(self, query: str, top_n: int = 4):
         """Run the full RAG chain and stream the answer to stdout."""
         print(f"\n🔍 Retrieving context for: '{query}'...")
         self._last_chunks = traced_retrieve(self.retriever, query, top_n=top_n)
 
         if not self._last_chunks:
-            msg = "I couldn't find any official documentation related to that question."
-            print(msg)
-            return msg
+            yield "I couldn't find any official documentation related to that question."
+            return  
 
         print("🧠 Generating answer...\n")
 
