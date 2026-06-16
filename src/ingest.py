@@ -84,6 +84,9 @@ def clean_markdown(raw_text: str) -> str:
         r'^#{1,3}\s*BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
         r'^BS-DS_\s*May\s*2026\s*Grading\s*document\s*\(Student\)\s*$',
         r'^Updated\s+automatically\s+every\s+\d+\s+minutes\s*$',
+        r'^#\s+BS-DS_[^\n]*Grading\s+document[^\n]*$',
+        r'^BS-DS_[^\n]*Grading\s+document[^\n]*$',
+        r'^\d{1,3}/\d{2,3}\s*$',
     ]
     text = raw_text
     for pattern in noise_patterns:
@@ -92,6 +95,7 @@ def clean_markdown(raw_text: str) -> str:
     text = html_tables_to_markdown(text)
     text = re.sub(r'[ \t]{2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text).strip()
+    text = re.sub(r'([a-zA-Z,])\n([a-z])', r'\1 \2', text)
     return text
 
 
