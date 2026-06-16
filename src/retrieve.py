@@ -2,18 +2,16 @@ import re
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
-from langchain_classic.retrievers.document_compressors import CrossEncoderReranker
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_core.documents import Document
-from langchain_classic.retrievers import EnsembleRetriever, ContextualCompressionRetriever
-
+from langchain_classic.retrievers import EnsembleRetriever
 
 DB_DIR          = "db"
 COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL     = "BAAI/bge-small-en-v1.5"
-RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2" # cross-encoder/ms-marco-MiniLM-L-6-v2
 
-HYBRID_TOP_K    = 15   # candidates fetched by each of vector + BM25
+HYBRID_TOP_K    = 8   # candidates fetched by each of vector + BM25
 FINAL_TOP_N     = 5    # chunks returned after reranking
 
 # Weights for RRF fusion: [vector_weight, bm25_weight]
@@ -89,14 +87,14 @@ class Retriever:
         Run the full hybrid + rerank pipeline.
         Returns a list of dicts with keys: text, source, page, rerank_score.
         """
-        # Step 1: hybrid fetch (RRF-fused vector + BM25)
+        # hybrid fetch (RRF-fused vector + BM25)
         candidates: list[Document] = self.ensemble_retriever.invoke(query)
 
-        # Step 2: cross-encoder rerank — score every (query, chunk) pair
+        # cross-encoder rerank — score every (query, chunk) pair
         pairs  = [(query, doc.page_content) for doc in candidates]
         scores = self.cross_encoder.score(pairs)   # returns list[float]
 
-        # Step 3: apply ToC penalty, build result dicts, sort by score
+        # apply ToC penalty, build result dicts, sort by score
         results = []
         for doc, score in zip(candidates, scores):
             if _is_toc_chunk(doc.page_content):
