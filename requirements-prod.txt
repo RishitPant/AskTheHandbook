@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pyyaml
+chromadb
+langchain
+langchain-core
+langchain-community
+langchain-chroma
+langchain-huggingface
+langchain-classic
+langchain-openai
+langchain-groq
+openai
+sentence-transformers
+rank-bm25
+langfuse

@@ -1,0 +1,15 @@
+.env
+db/
+data/
+eval/
+.venv/
+__pycache__/
+*.pyc
+.deepeval/
+uv.lock
+requirements-dev.txt
+.github/
+.gitattributes
+hello.py
+README.md
+pyproject.toml
