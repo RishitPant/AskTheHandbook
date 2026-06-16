@@ -30,14 +30,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-prod.txt
 
-      - name: Build vector index
-        working-directory: .
-        env:
-          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
-          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
-          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
-        run: python src/ingest.py
-
       - name: Run keyword-only eval (CI gate)
         working-directory: .
         env:
