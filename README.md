@@ -1,4 +1,15 @@
-# IITM BS Degree RAG Assistant
+---
+title: AskTheHandbook
+emoji: 🎓
+colorFrom: blue
+colorTo: indigo
+sdk: docker
+pinned: false
+app_port: 7860
+---
+
+
+# AskTheHandbook
 
 A production-style Retrieval-Augmented Generation (RAG) system that answers
 student questions about the IITM BS Degree Programme — fees, grading
