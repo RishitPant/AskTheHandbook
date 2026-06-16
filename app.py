@@ -96,7 +96,16 @@ def chat_stream(req: ChatRequest):
             yield f"data: {json.dumps({'token': token})}\n\n"
         yield f"data: {json.dumps({'done': True, 'sources': gen.get_sources()})}\n\n"  
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+    return StreamingResponse(
+    event_stream(),
+    media_type="text/event-stream",
+    headers={
+        "Cache-Control": "no-cache",
+        "X-Accel-Buffering": "no",
+        "Connection": "keep-alive",
+    },
+)
+
 
 
 # Serve the static chat UI (index.html + assets) at the root path.
