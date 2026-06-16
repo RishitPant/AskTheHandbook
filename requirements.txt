@@ -26,3 +26,5 @@ langchain-classic
 langchain_groq
 langfuse
 openai
+fastapi
+uvicorn[standard]
