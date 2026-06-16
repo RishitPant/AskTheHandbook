@@ -92,8 +92,12 @@ def chat_stream(req: ChatRequest):
     gen = get_generator()
 
     def event_stream():
+        count = 0
         for token in gen.answer(req.question, top_n=req.top_n):
+            count += 1
+            print(f"[STREAM] yielding token #{count}: {token!r}", flush=True)
             yield f"data: {json.dumps({'token': token})}\n\n"
+        print(f"[STREAM] loop finished, total tokens yielded: {count}", flush=True)
         yield f"data: {json.dumps({'done': True, 'sources': gen.get_sources()})}\n\n"  
 
     return StreamingResponse(
