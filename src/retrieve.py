@@ -13,7 +13,7 @@ COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL     = "BAAI/bge-small-en-v1.5"
 RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-HYBRID_TOP_K    = 15   # candidates fetched by each of vector + BM25
+HYBRID_TOP_K    = 8   # candidates fetched by each of vector + BM25
 FINAL_TOP_N     = 5    # chunks returned after reranking
 
 # Weights for RRF fusion: [vector_weight, bm25_weight]
