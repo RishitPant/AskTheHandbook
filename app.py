@@ -1,16 +1,3 @@
-"""
-FastAPI entrypoint for the IITM BS Degree RAG Assistant.
-
-Endpoints:
-  GET  /api/health        — liveness check, reports Chroma backend in use
-  POST /api/chat          — single JSON response {answer, sources}
-  POST /api/chat/stream   — Server-Sent Events stream of answer tokens,
-                             followed by a final `sources` event
-
-The Retriever (embeddings + vectorstore + cross-encoder) is loaded once at
-startup via FastAPI's lifespan, not per-request — model loads are the
-expensive part and must not happen on every call.
-"""
 import json
 import sys
 from contextlib import asynccontextmanager
@@ -24,8 +11,8 @@ from pydantic import BaseModel, Field
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
 
-from generate import Generator  # noqa: E402
-from retrieve import USE_CHROMA_CLOUD  # noqa: E402
+from generate import Generator
+from retrieve import USE_CHROMA_CLOUD
 
 _state: dict = {}
 
@@ -39,7 +26,7 @@ async def lifespan(app: FastAPI):
     _state.clear()
 
 
-app = FastAPI(title="IITM BS Degree RAG Assistant", lifespan=lifespan)
+app = FastAPI(title="AskTheHandbook", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -95,7 +82,6 @@ def chat_stream(req: ChatRequest):
         count = 0
         for token in gen.answer(req.question, top_n=req.top_n):
             count += 1
-            print(f"[STREAM] yielding token #{count}: {token!r}", flush=True)
             yield f"data: {json.dumps({'token': token})}\n\n"
         print(f"[STREAM] loop finished, total tokens yielded: {count}", flush=True)
         yield f"data: {json.dumps({'done': True, 'sources': gen.get_sources()})}\n\n"  
@@ -111,9 +97,6 @@ def chat_stream(req: ChatRequest):
 )
 
 
-
-# Serve the static chat UI (index.html + assets) at the root path.
-# Mounted last so /api/* routes above take precedence.
 static_dir = Path(__file__).parent / "static"
 if static_dir.exists():
     app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
