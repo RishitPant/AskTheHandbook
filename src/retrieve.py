@@ -14,12 +14,11 @@ load_dotenv()
 DB_DIR          = "db"
 COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL     = "BAAI/bge-small-en-v1.5"
-RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2" # cross-encoder/ms-marco-MiniLM-L-6-v2
+RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-HYBRID_TOP_K    = 8   # candidates fetched by each of vector + BM25
-FINAL_TOP_N     = 5    # chunks returned after reranking
+HYBRID_TOP_K    = 8
+FINAL_TOP_N     = 5
 
-# Weights for RRF fusion: [vector_weight, bm25_weight]
 ENSEMBLE_WEIGHTS = [0.6, 0.4]
 
 CHROMA_API_KEY  = os.getenv("CHROMA_API_KEY")
