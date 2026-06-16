@@ -3,12 +3,9 @@ import sys
 from dotenv import load_dotenv
 from pathlib import Path
 import yaml
-from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from retrieve import Retriever
-from tracing import traced_retrieve, get_callbacks, langfuse, LANGFUSE_ENABLED, observe
+from tracing import traced_retrieve, langfuse, LANGFUSE_ENABLED, observe
 from langfuse.openai import OpenAI
 
 load_dotenv()
@@ -103,7 +100,7 @@ class Generator:
 if __name__ == "__main__":
     agent = Generator()
 
-    print("\n🎓 IITM BS Degree RAG Assistant Online!")
+    print("\n AskTheHandbook")
     print("Type 'exit' or 'quit' to close.\n")
 
     while True:
