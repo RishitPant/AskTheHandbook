@@ -3,7 +3,7 @@ name: RAG Quality Gate
 on:
   push:
     branches:
-      - '**'
+      - main
 
 jobs:
   evaluate:
