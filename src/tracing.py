@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+from langfuse import get_client, observe as _observe
+from langfuse.langchain import CallbackHandler
 
 load_dotenv()
 
@@ -12,9 +14,6 @@ langfuse_handler = None
 observe = None
 
 if LANGFUSE_ENABLED:
-    from langfuse import get_client, observe as _observe
-    from langfuse.langchain import CallbackHandler
-
     langfuse = get_client()
     langfuse_handler = CallbackHandler()
     observe = _observe

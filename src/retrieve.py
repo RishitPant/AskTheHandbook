@@ -1,10 +1,15 @@
 import re
+from dotenv import load_dotenv
+import os
+import chromadb
 from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.retrievers import BM25Retriever
 from langchain_community.cross_encoders import HuggingFaceCrossEncoder
 from langchain_core.documents import Document
 from langchain_classic.retrievers import EnsembleRetriever
+
+load_dotenv()
 
 DB_DIR          = "db"
 COLLECTION_NAME = "handbook_docs"
@@ -16,6 +21,21 @@ FINAL_TOP_N     = 5    # chunks returned after reranking
 
 # Weights for RRF fusion: [vector_weight, bm25_weight]
 ENSEMBLE_WEIGHTS = [0.6, 0.4]
+
+CHROMA_API_KEY  = os.getenv("CHROMA_API_KEY")
+CHROMA_TENANT   = os.getenv("CHROMA_TENANT")
+CHROMA_DATABASE = os.getenv("CHROMA_DATABASE")
+USE_CHROMA_CLOUD = bool(CHROMA_API_KEY)
+
+
+def get_chroma_client():
+    if USE_CHROMA_CLOUD:
+        return chromadb.CloudClient(
+            api_key=CHROMA_API_KEY,
+            tenant=CHROMA_TENANT,
+            database=CHROMA_DATABASE,
+        )
+    return chromadb.PersistentClient(path=DB_DIR)
 
 
 _NOISE_PATTERNS = [
@@ -47,15 +67,18 @@ def _is_toc_chunk(text: str) -> bool:
 
 class Retriever:
     def __init__(self):
+        backend = "Chroma Cloud" if USE_CHROMA_CLOUD else f"local dir '{DB_DIR}'"
+        print(f"Connecting to Chroma backend: {backend}")
+
         embeddings = HuggingFaceEmbeddings(
             model_name=EMBED_MODEL,
             encode_kwargs={"normalize_embeddings": True},
         )
 
         vectorstore = Chroma(
+            client=get_chroma_client(),
             collection_name=COLLECTION_NAME,
             embedding_function=embeddings,
-            persist_directory=DB_DIR,
         )
         vector_retriever = vectorstore.as_retriever(
             search_type="similarity",
@@ -122,9 +145,9 @@ if __name__ == "__main__":
     r = Retriever()
 
     queries = [
-        "What is the revised fee for the foundation level?",
-        "Eligibility to appear for the qualifier exam?",
-        "When is the End Term Exam for May 2026?",
+        "What is the alumni fees?",
+        "What is the criteria to pass DBMS OPPE?",
+        "What is the end term exam date?",
     ]
 
     for q in queries:
