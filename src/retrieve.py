@@ -145,9 +145,7 @@ if __name__ == "__main__":
     r = Retriever()
 
     queries = [
-        "What is the alumni fees?",
-        "What is the criteria to pass DBMS OPPE?",
-        "What is the end term exam date?",
+        "What is the alumni fees?"
     ]
 
     for q in queries:
