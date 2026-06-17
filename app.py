@@ -18,7 +18,7 @@ from generate import Generator
 from retrieve import USE_CHROMA_CLOUD
 
 _state: dict = {}
-limiter = Limiter(key_func=get_remote_address, default_limits=["10/minute"])
+limiter = Limiter(key_func=get_remote_address, default_limits=["5/minute"])
 
 
 def get_client_ip(request: Request) -> str:
@@ -34,7 +34,7 @@ def get_client_ip(request: Request) -> str:
 
 limiter = Limiter(
     key_func=get_client_ip,
-    default_limits=["2/minute"],
+    default_limits=["5/minute"],
 )
 
 
@@ -91,7 +91,7 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-@limiter.limit("2/minute")
+@limiter.limit("5/minute")
 def chat(req: ChatRequest, request: Request):
     gen = get_generator()
     tokens = list(gen.answer(req.question, top_n=req.top_n))
@@ -99,7 +99,7 @@ def chat(req: ChatRequest, request: Request):
 
 
 @app.post("/api/chat/stream")
-@limiter.limit("2/minute")
+@limiter.limit("5/minute")
 def chat_stream(req: ChatRequest, request: Request):
     gen = get_generator()
 
