@@ -203,6 +203,17 @@ form.addEventListener('submit', async (e) => {
       body: JSON.stringify({ question })
     });
 
+    if (res.status === 429) {
+      cursor.remove();
+      answerDiv.textContent = "You've hit the question limit for now — try again after a minute.";
+      return;
+    }
+    if (!res.ok) {
+      cursor.remove();
+      answerDiv.textContent = 'Something went wrong reaching the assistant. Please try again.';
+      return;
+    }
+
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
