@@ -17,6 +17,7 @@ Features:
 - Versioned prompts
 - Automated evaluation harness with checkpointing
 - Langfuse observability
+- Rate limiting via `slowapi` (5 requests/minute per IP, proxy-aware)
 - CI quality gate with auto-deploy to Hugging Face Spaces
 - FastAPI backend + web chat UI, Dockerized for production
 
@@ -53,7 +54,7 @@ generate.py  →  prompts.yaml (versioned prompts)
 
 ```
 RAG/
-├── app.py                         # FastAPI app (health/chat/stream + static UI)
+├── app.py                         # FastAPI app (chat/stream + static UI + rate limiting)
 ├── static/
 │   └── index.html                 # chat frontend
 ├── data/
@@ -65,7 +66,7 @@ RAG/
 │   ├── generate.py                # Generator class, RAG chain + CLI chat
 │   └── tracing.py                 # Langfuse observability (opt-in)
 ├── eval/
-│   ├── eval_prompts.json          # 10-question golden set
+│   ├── eval_prompts.json          # 10-question set
 │   ├── evaluate.py                # DeepEval harness
 │   └── report.json                # latest run's results
 ├── db/                            # local ChromaDB vector store (generated)
@@ -83,14 +84,14 @@ RAG/
 - Header-aware splitting (`MarkdownHeaderTextSplitter`) + `RecursiveCharacterTextSplitter` (2000 char chunks, 200 overlap)
 - Wraps each chunk with `[Course: h1 > h2 > h3]` tags for both vector and BM25 search
 - Embeddings: `BAAI/bge-small-en-v1.5`
-- Writes to **Chroma Cloud** if `CHROMA_API_KEY` is set, else to local ChromaDB 
+- Writes to **Chroma Cloud** if `CHROMA_API_KEY` is set, else to local ChromaDB
 
 ### Retrieval (`src/retrieve.py`)
 - Hybrid search: vector + BM25, fused via `EnsembleRetriever` (weights `[0.6, 0.4]`), 8 candidates each
 - Cross-encoder reranking: `cross-encoder/ms-marco-MiniLM-L-6-v2` rescores every (query, chunk) pair
 - ToC penalty: deprioritizes table-of-contents-like chunks
 - Scrubs residual export noise before chunks reach the LLM
-- Returns top N chunks with `text`, `source`, `page` (section path), `rerank_score`
+- Returns top N chunks (default 5) with `text`, `source`, `page` (section path), `rerank_score`
 - Same Chroma Cloud / local switch as ingestion, via `USE_CHROMA_CLOUD`
 
 ### Generation (`src/generate.py`)
@@ -98,6 +99,7 @@ RAG/
 - Prompts loaded from `prompts.yaml` (not hardcoded), version printed at startup
 - System prompt enforces: strict grounding, no hallucination, table extraction, mandatory citations, defining acronyms, flagging overlapping fee figures, one course at a time
 - Streams tokens via Groq's OpenAI-compatible endpoint
+- Model overridable via `RAG_MODEL` env var (default: `llama-3.3-70b-versatile`)
 - `get_sources()` returns the deduplicated source list for the last answer
 - Each turn wrapped in an `@observe` span for tracing
 
@@ -108,6 +110,7 @@ RAG/
   - `POST /api/chat/stream` — Server-Sent Events streaming chat
 - RAG pipeline loaded once at startup (FastAPI lifespan), not per-request
 - Static chat UI served from `static/` at `/`
+- Rate limiting: 5 requests/minute per IP via `slowapi`; proxy-aware (reads `X-Forwarded-For`)
 - CORS open by default (`allow_origins=["*"]`)
 
 ### Observability (`src/tracing.py`)
@@ -133,6 +136,7 @@ RAG/
 - Throttling between calls/metrics to stay under rate limits
 - Per-question checkpointing (`eval_checkpoint.json`) — resumes after a crash, clears on a clean pass
 - Every run writes `eval/report.json`: model/prompt versions, per-metric averages, per-question breakdown, pass/fail gate
+- Judge model overridable via `JUDGE_MODEL` env var (default: `llama-3.3-70b-versatile`); CI uses `llama-3.1-8b-instant` for speed
 
 **Latest result** (10 questions, judge = `llama-3.3-70b-versatile`, threshold 0.5):
 
@@ -156,14 +160,14 @@ RAG/
 - `human` — shared `{context}` / `{question}` template for both prod and eval
 - `version` — bumped on any prompt change, recorded in every `report.json`
 
-Current version: **1.3.0**
+Current version: **1.4.0**
 
 ---
 
 ## CI/CD (`.github/workflows/ci.yaml`)
 
 On push to `main`:
-1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval, against Chroma Cloud (`python eval/evaluate.py --no-deepeval --threshold 0.5`)
+1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `llama-3.1-8b-instant` (`python eval/evaluate.py --no-deepeval --threshold 0.5`)
 2. **Deploy** — if the gate passes, force-pushes the repo to the linked Hugging Face Space, which rebuilds the Docker image and redeploys
 
 - DeepEval (faithfulness/relevancy/precision) gate is **not yet wired into CI** due to api rate limits — roadmap item, planned for PRs into `main` only (~5–10 min throttled runtime)
@@ -226,7 +230,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 
 ## Tech stack
 
-LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-small-en-v1.5` embeddings · `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker · Groq (`llama-3.3-70b-versatile`) · FastAPI · DeepEval · Langfuse · GitHub Actions · Docker · Hugging Face Spaces
+LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-small-en-v1.5` embeddings · `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker · Groq (`llama-3.3-70b-versatile`) · FastAPI · slowapi · DeepEval · Langfuse · GitHub Actions · Docker · Hugging Face Spaces
 
 ---
 
@@ -234,4 +238,4 @@ LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-s
 
 - Wire the DeepEval gate into CI (currently keyword-only; scope to PRs into `main`)
 - Improve Contextual Precision on scheduling/fee-overlap questions — tune BM25/vector weights, increase `HYBRID_TOP_K`, or add query expansion
-- Add auth/rate-limiting to the public API endpoints before wider sharing
+- Add auth to the public API endpoints before wider sharing
