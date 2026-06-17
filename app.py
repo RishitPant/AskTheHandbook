@@ -21,6 +21,23 @@ _state: dict = {}
 limiter = Limiter(key_func=get_remote_address, default_limits=["10/minute"])
 
 
+def get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        # the header can be a comma-separated chain (client, proxy1, proxy2, ...);
+        # the first entry is the original client
+        return forwarded.split(",")[0].strip()
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+limiter = Limiter(
+    key_func=get_client_ip,
+    default_limits=["5/minute"],
+)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("Loading RAG pipeline (embeddings, vectorstore, reranker, LLM client)...")
