@@ -9,6 +9,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -17,6 +18,7 @@ from generate import Generator
 from retrieve import USE_CHROMA_CLOUD
 
 _state: dict = {}
+limiter = Limiter(key_func=get_remote_address, default_limits=["10/minute"])
 
 
 def get_client_ip(request: Request) -> str:
@@ -89,7 +91,7 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
 def chat(req: ChatRequest, request: Request):
     gen = get_generator()
     tokens = list(gen.answer(req.question, top_n=req.top_n))
@@ -97,7 +99,7 @@ def chat(req: ChatRequest, request: Request):
 
 
 @app.post("/api/chat/stream")
-@limiter.limit("5/minute")
+@limiter.limit("10/minute")
 def chat_stream(req: ChatRequest, request: Request):
     gen = get_generator()
 
