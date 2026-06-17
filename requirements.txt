@@ -28,3 +28,4 @@ langfuse
 openai
 fastapi
 uvicorn[standard]
+slowapi

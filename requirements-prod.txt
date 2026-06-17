@@ -16,3 +16,4 @@ sentence-transformers
 rank-bm25
 langfuse
 deepeval
+slowapi
