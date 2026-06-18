@@ -1875,7 +1875,7 @@ https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1
 
 to attend the exam and if you are eligible, exam will be scheduled as per the slots allocated. Please choose courses for the May 2026 term keeping all these points in mind.
 
-## 1. Machine Learning foundations (DS Diploma)
+## 1. Machine Learning foundations (DS Diploma) (MLF)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -1901,7 +1901,7 @@ Overall score for eligible students:
 
 (Though the W11/W12 assignment score is not included in GAA, W11/W12 contents will be included for the final exam. Hence, please practice and submit W11/W12 assignment).
 
-## 2. Machine Learning Techniques (Diploma in DS)
+## 2. Machine Learning Techniques (Diploma in DS) (MLT)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -1922,7 +1922,7 @@ Overall score for eligible students:
 
 **Bonus of 3 marks awarded for the Programming Assignment Submission IF average of ALL assignments >= 40.**
 
-## 3. Machine Learning Practice (Diploma in DS)
+## 3. Machine Learning Practice (Diploma in DS) (MLP)
 
 **Quiz 1: No Quiz 1** **Quiz 2: No Quiz 2** **End term: September 13 2026**
 
@@ -2078,7 +2078,7 @@ Google Docs logo Published using Google Docs Report abuse Learn more
 # BS-DS_ May 2026 Grading document (Student)
 Updated automatically every 5 minutes
 
-## 4. Business Data Management (DS Diploma)
+## 4. Business Data Management (DS Diploma) (BDM)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -2101,7 +2101,7 @@ Overall score for eligible students:
 
 (Though the W11/W12 assignment score is not included in GAA, W11/W12 contents will be included for the final exam. Hence, please practice and submit W11/W12 assignment).
 
-## 5. Business Analytics (Diploma in DS)
+## 5. Business Analytics (Diploma in DS) (BA)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -2166,7 +2166,7 @@ A = Sum of the Best 2 out of (Assignment 1, Assignment 2, Assignment 3)
   </tbody>
 </table>
 
-## 6. Tools in Data Science (Diploma in DS)
+## 6. Tools in Data Science (Diploma in DS) (TDS)
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ... 16/40
 
@@ -2463,7 +2463,7 @@ BS-DS_ May 2026 Grading document (Student) Updated automatically every 5 minutes
   </tbody>
 </table>
 
-## 9. Application development - 1 (Diploma in programming)
+## 9. Application development - 1 (Diploma in programming) (MAD 1)
 
 **Quiz 1**: July 19 2026
 **Quiz 2**: August 16 2026
@@ -2702,7 +2702,7 @@ GAA = average of score in Best 6 out of 7 weeks programming graded assignments g
   </tbody>
 </table>
 
-## 11. <u>System</u> commands (Diploma in programming)
+## 11. <u>System</u> commands (Diploma in programming) (SC)
 
 **Quiz 1**: July 19 2026
 **Quiz 2**: No Quiz
@@ -2854,7 +2854,7 @@ Updated automatically every 5 minutes
   </tbody>
 </table>
 
-## 12. Application Development - 2 (Diploma in programming)
+## 12. Application Development - 2 (Diploma in programming) (MAD 2)
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -2947,7 +2947,7 @@ MLP course is a co-requisite for MLP project.
 BDM course is a co-requisite for BDM project.
 DL-GenAI Theory is a co-requisite for DL-GenAI Project
 
-**FOR MLP:** There will be fortnightly assessments configured in the MLP project course alone that you have to submit. We will be using this information to cross check your engagement in the course.
+There will be fortnightly assessments configured in the MLP project course alone that you have to submit. We will be using this information to cross check your engagement in the course.
 
 Submission deadline :
 
@@ -3018,7 +3018,7 @@ Updated automatically every 5 minutes
 
 https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ-A9dMIXVrfe069kqUkplPMRAiZBBIMJcp9XTCR/pub
 
-### MAD I Project
+### MAD 1 Project
 
 **Project Document:**
 https://docs.google.com/document/d/e/2PACX-1vR9pOLPvPzsxqhtrmtLi8GAV2j2JxpisWkIHCjEb8WuYrgm4ZPq8S_Sor-MygixO4hvGcPvO6Ei_W/pub
@@ -3026,7 +3026,7 @@ https://docs.google.com/document/d/e/2PACX-1vR9pOLPvPzsxqhtrmtLi8GAV2j2JxpisWkIH
 **Project statement - Trekking Management Application:**
 https://docs.google.com/document/d/e/2PACX-1vQvqzWz2tFt96B8VApnHqWqIP3LtPDbnXwApYr8VOffLCm_Zh2JuTa51z7d1CNJbrZKC0oWPredYcV/pub
 
-### MAD II Project
+### MAD 2 Project
 
 **Project document:**
 https://docs.google.com/document/d/e/2PACX-1vTKQBIsllAp4VUq_rST3_rbpMSoADyfb3agZ1E-jrGQxMeN2IBNOXu3GS0mchzRWaxWa204q52tbFYA/pub
@@ -3140,11 +3140,13 @@ Remaining credits are from any of the other in-house/campus electives or Apprent
 
 Apprenticeship is **completely optional.** Students can also complete the BS level by just doing only course work.
 
-**SWAYAM NPTEL Approved Dep/Free Elective course list:**
+**SWAYAM NPTEL Approved Dep/Free Elective course list: (Technical Bucket)**
 
-<u>https://docs.google.com/spreadsheets/d/e/2PACX-1vSJXV0JECyoQvgWvBlVxO13G0KRm5a1qNCRBa7Raw8GDY4e0cfm1KiVCwlgs_ed80ObtzQ1rfx_JWIR/pubhtml?gid=399341609&single=true</u>
+https://www.google.com/url?q=https://docs.google.com/spreadsheets/d/e/2PACX-1vSJXV0JECyoQvgWvBlVxO13G0KRm5a1qNCRBa7rAw8GDY4e0cfm1KiVCwIgs_ed80ObtzQ1rfx_JWIR/pubhtml?gid%3D399341609%26single%3Dtrue&sa=D&source=editors&ust=1781015987535020&usg=AOvVaw2TuNVib9vAWX4ZjzsHlw5q
 
-https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGFfI7W1j-6wTLCex13O_7BZmf6a96Q6lio0W-mLZB5hOGZ... 26/40
+**SWAYAM NPTEL Approved HS/MG course list: (HSMG)**
+
+https://www.google.com/url?q=https://docs.google.com/spreadsheets/d/e/2PACX-1vSJXV0JECyoQvgWvBlVxO13G0KRm5a1qNCRBa7rAw8GDY4e0cfm1KiVCwIgs_ed80ObtzQ1rfx_JWIR/pubhtml?gid%3D1418834182%26single%3Dtrue&sa=D&source=editors&ust=1781015987535555&usg=AOvVaw2nxMvo8nZ60OFBFkmJUB7O 
 
 6/9/26, 7:10 PM BS-DS_ May 2026 Grading document (Student)
 
@@ -3171,7 +3173,7 @@ It is important you learn more on programming and data science outside of what t
 
 4. Please do not share your assignments with others before the deadlines. If similarities are found between submissions, all will be penalised irrespective of who did it first and who shared it with whom.
 
-# 1. Software Testing
+# 1. Software Testing (ST)
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3188,7 +3190,7 @@ Qz2 = score in Quiz II (0, if not attempted)
 F - score in End Term exam
 **T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2**
 
-# 2. Software Engineering
+# 2. Software Engineering (SE)
 
 **Quiz 1**: No Quiz **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3253,7 +3255,7 @@ BS-DS_ May 2026 Grading document (Student)
 
 Updated automatically every 5 minutes
 
-# 3. Deep Learning
+# 3. Deep Learning (DL)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -3280,7 +3282,7 @@ F - score in End Term exam
 
 **T = 0.05GAA + 0.25Qz1 + 0.25Qz2 + 0.45F**
 
-# 4. AI: Search Methods for Problem Solving
+# 4. AI: Search Methods for Problem Solving (AI SMPS)
 
 **Academic policies**
 
@@ -3323,7 +3325,7 @@ Programming Assignment 1 will be released between Quiz 1 and Quiz 2.
 
 The dates will be announced in the forum. This assignment will be evaluated offline.
 
-# 5. Strategies for Professional Growth
+# 5. Strategies for Professional Growth (SPG)
 
 **Academic policies**
 
@@ -3430,7 +3432,7 @@ Final course score calculation:
 
 **T = 0.10GAA (GA+GrPAs) + 0.20Qz1 + 0.20 OPPE1 + 0.20 OPPE2 + 0.30F**
 
-# 7. Deep Learning for CV
+# 7. Deep Learning for CV (DLCV)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 **Above to be attended in person at designated centres.**
@@ -3455,7 +3457,7 @@ Bonus = Optional project: Max 5 bonus marks will be awarded for successful compl
 
 Project components will be released in the portal which will not be part of the scores. That will be considered for the special certification.
 
-# 8. Large Language Models
+# 8. Large Language Models (LLM)
 
 ## <u>Academic policies</u>
 
@@ -3500,7 +3502,7 @@ Google Docs icon Published using Google Docs
 
 Updated automatically every 5 minutes
 
-# 9. Deep Learning Practice
+# 9. Deep Learning Practice (DLP)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 <span style="color: red">Above to be attended in person at designated centres.</span>
@@ -3566,7 +3568,7 @@ GAA - Average score in best 10 weekly graded assignments out of 11 assignments.
 
 <span style="color: blue">**T = 0.05 GA + 0.15 Quiz 1 + 0.15 Quiz 2 + 0.15 Quiz 3 + 0.25 * ((NPPE1+NPPE2+NPPE3)/3) + 0.25 Viva**</span>
 
-# 10. Data Science and AI Lab
+# 10. Data Science and AI Lab (DSAI)
 
 **Quiz 1: No Quiz** <span style="color: brown">**Quiz 2: August 16 2026**</span> <span style="color: brown">**End term: No EndTerm**</span>
 
@@ -3683,7 +3685,7 @@ To be eligible for the final project viva, learners must satisfy the following c
 
 **Final course score T = 20% from Quiz 2 + 30% from weekly assignments (average score of first 10 weeks will be considered) + 50% from Project Viva**
 
-# 12.Algorithmic Thinking in Bioinformatics
+# 12.Algorithmic Thinking in Bioinformatics (ATB)
 
 <mark>Quiz 1: July 19 2026 Quiz 2: August 16 2026 End term: September 13 2026</mark>
 
@@ -3708,7 +3710,7 @@ Qz2 = score in Quiz II (0, if not attempted), Syllabus: Week 5-8
 F = score in final exam, Syllabus: Week 1-12
 **T = 0.075 GAA + 0.025 GRPA + 0.25Qz1 + 0.25Qz2 + 0.4F**
 
-# 13.Market Research
+# 13.Market Research (MR)
 
 **Quiz 1:** July 19 2026 **Quiz 2:** August 16 2026 **End term:** September 13 2026
 
@@ -3739,7 +3741,7 @@ Overall score for eligible students:
 **Case release date:** YTD
 **Case presentation:** Depending on numbers, if needed can extend one more day for presentation.
 
-# 14.Managerial Economics
+# 14.Managerial Economics (ME)
 
 **Quiz 1:** July 19 2026 **Quiz 2:** August 16 2026 **End term:** September 13 2026
 
@@ -3760,7 +3762,7 @@ F = score in final exam
 
 **T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2**
 
-# 15. MLOps (Machine Learning Operations)
+# 15. MLOps (Machine Learning Operations) 
 
 **Quiz 1:** NA **Quiz 2:** NA **End term:** September 13 2026
 
@@ -3838,7 +3840,7 @@ NPPE = Non-proctored programming assignment
 
 T = 0.05*GAA + 0.35*F + 0.2*Qz1 + 0.2*Qz2 + 0.2*NPPE
 
-# 17. Data Visualization Design
+# 17. Data Visualization Design (DVD)
 
 Quiz 1: July 19 2026 Quiz 2: August 16 2026 End term: No End term
 
@@ -3869,7 +3871,7 @@ Bonus: Maximum of bonus 5 Marks & 2.5 marks for each.
 
 T = 0.3GA + Max(0.2Qz1+0.2Qz2, 0.3Max(Qz1,Qz2)) + 0.3P + Bonus
 
-# 18. Design Thinking for Data-Driven App Development
+# 18. Design Thinking for Data-Driven App Development (DTDDAD)
 
 ## Academic policies
 
@@ -3944,7 +3946,7 @@ More details about the Group Project will be given in the course.
 
 Bonus marks for additional activities may be awarded at the discretion of faculty or instructor, provided the student passes the course.
 
-# 19. Privacy & Security in Online Social Media
+# 19. Privacy & Security in Online Social Media (PSOSM)
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3968,7 +3970,7 @@ Qz2 = score in Quiz II (0, if not attempted)
 F - score in End Term exam
 T = 0.2 GAA + 0.3F + 0.25Qz1 + 0.25Qz2
 
-# 20. Computer Systems Design
+# 20. Computer Systems Design (CSD)
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -3986,7 +3988,7 @@ F = score in final exam
 
 T = 0.1GAA + 0.4F + 0.2Qz1 + 0.25Qz2 + 0.05 circuit verse assignment
 
-# 21. Game Theory and Strategy
+# 21. Game Theory and Strategy (GTS)
 
 **Quiz 1**: July 19 2026 **Quiz 2**: August 16 2026 **End term**: September 13 2026
 
@@ -4058,7 +4060,7 @@ BONUS = at most 4 marks based on bonus questions in quizzes
 
 **Total course score T = 0.1GAA + 0.1PAA + 0.45F + 0.35Qz2 + BONUS**
 
-# 23. Discrete Mathematics
+# 23. Discrete Mathematics (DM)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -4073,7 +4075,7 @@ Qz1 = score in Quiz I (0, if not attempted)
 F = score in final exam
 **T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2**
 
-# 24. Compiler Design
+# 24. Compiler Design (CD)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -4102,7 +4104,7 @@ Qz2 = score in Quiz I (0, if not attempted)
 F = score in final exam
 T = 0.1GAA + 0.4F + 0.25Qz1 + 0.25Qz2
 
-# 25. <u>Theory of Computation</u>
+# 25. <u>Theory of Computation</u> (TOC)
 
 **Quiz 1: July 19 2026** **Quiz 2: August 16 2026** **End term: September 13 2026**
 
@@ -4233,27 +4235,6 @@ SCHEDULE IS TENTATIVE AND SUBJECT TO CHANGE DEPENDING ON FACULTY AVAILABILITY AN
         <td>N</td>
         <td>Y</td>
     </tr>
-  </tbody>
-</table>
-
-https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ… 38/40
-
-6/9/26, 7:10 PM
-
-BS-DS_ May 2026 Grading document (Student)
-
-Google Docs logo Published using Google Docs
-
-Report abuse
-
-Learn more
-
-BS-DS_ May 2026 Grading document (Student)
-
-Updated automatically every 5 minutes
-
-<table>
-  <tbody>
     <tr>
         <td>BSCS4001</td>
         <td>L4_DEGREE</td>
@@ -4614,42 +4595,6 @@ Updated automatically every 5 minutes
         <td>Y</td>
         <td>Y</td>
     </tr>
-  </tbody>
-</table>
-
-https://docs.google.com/document/d/e/2PACX-1vT5PBOz4OH663W0IJPVGVjG_nfmYZGfFI7W1j-6wTLcex13O_7BZmf6a96Q6liO0W-mLZB5hOGZ…
-
-39/40
-
-6/9/26, 7:10 PM
-
-BS-DS_ May 2026 Grading document (Student)
-
-Google Docs icon Published using Google Docs
-
-Report abuse
-
-Learn more
-
-# BS-DS_ May 2026 Grading document (Student)
-
-Updated automatically every 5 minutes
-
-<table>
-  <thead>
-    <tr>
-        <th> </th>
-        <th> </th>
-        <th>Technology</th>
-        <th> </th>
-        <th> </th>
-        <th> </th>
-        <th> </th>
-        <th> </th>
-        <th> </th>
-    </tr>
-  </thead>
-  <tbody>
     <tr>
         <td>BSCS4009</td>
         <td>GATE</td>
