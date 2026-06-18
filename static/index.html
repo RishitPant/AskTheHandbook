@@ -73,7 +73,7 @@
     letter-spacing: 0.03em;
   }
   .msg.user::before { content: "Q. "; }
-  .msg.answer { white-space: pre-wrap; }
+  .msg.answer { white-space: normal; }
   .sources {
     margin-top: 0.5rem;
     font-family: var(--mono);
@@ -138,7 +138,57 @@
     animation: blink 1s step-start infinite;
   }
   @keyframes blink { 50% { opacity: 0; } }
+  /* --- markdown rendering ----------------------------------------- */
+  .msg.answer { white-space: normal; }   /* override pre-wrap; marked handles newlines */
+  .msg.answer p  { margin: 0 0 0.65em; }
+  .msg.answer p:last-child { margin-bottom: 0; }
+  .msg.answer ul, .msg.answer ol {
+    margin: 0.3em 0 0.65em 1.3em;
+    padding: 0;
+  }
+  .msg.answer li { margin-bottom: 0.2em; }
+  .msg.answer code {
+    font-family: var(--mono);
+    font-size: 0.82em;
+    background: #ede8dc;
+    padding: 0.1em 0.35em;
+    border-radius: 2px;
+  }
+  .msg.answer pre {
+    background: #ede8dc;
+    padding: 0.75rem 1rem;
+    border-radius: 3px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.82em;
+    line-height: 1.5;
+    margin: 0.5em 0;
+  }
+  .msg.answer pre code { background: none; padding: 0; }
+  .msg.answer strong { font-weight: 700; }
+  .msg.answer em     { font-style: italic; }
+  /* pipe tables */
+  .msg.answer table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.88em;
+    margin: 0.6em 0;
+    font-family: var(--serif);
+  }
+  .msg.answer th,
+  .msg.answer td {
+    border: 1px solid var(--rule);
+    padding: 5px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .msg.answer th {
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+  .msg.answer tr:nth-child(even) td { background: #faf8f2; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
 </head>
 <body>
   <header>
@@ -167,6 +217,15 @@ const emptyState = document.getElementById('empty-state');
 const form = document.getElementById('form');
 const input = document.getElementById('question');
 const submitBtn = document.getElementById('submit');
+
+// Configure marked: GitHub-flavoured tables on, sanitize off
+marked.use({ gfm: true, breaks: true });
+
+/** Render markdown into answerDiv, then re-attach the blinking cursor. */
+function renderAnswer(div, text, cursor) {
+  div.innerHTML = marked.parse(text);
+  div.appendChild(cursor);
+}
 
 input.addEventListener('input', () => {
   input.style.height = 'auto';
@@ -232,13 +291,14 @@ form.addEventListener('submit', async (e) => {
 
         if (payload.token) {
           fullText += payload.token;
-          answerDiv.textContent = fullText;
-          answerDiv.appendChild(cursor);
+          renderAnswer(answerDiv, fullText, cursor);
           window.scrollTo(0, document.body.scrollHeight);
         }
 
         if (payload.done) {
           cursor.remove();
+          // Final render without cursor interference
+          answerDiv.innerHTML = marked.parse(fullText);
           if (payload.sources && payload.sources.length) {
             const srcDiv = document.createElement('div');
             srcDiv.className = 'sources';
