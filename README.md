@@ -12,6 +12,8 @@ app_port: 7860
 
 A production-style RAG system that answers student questions about the IITM BS Degree Programme (fees, grading, exams, eligibility, academic structure) strictly grounded in the official handbook and grading documents, with source citations.
 
+🔗 **Live demo:** [huggingface.co/spaces/rishitpant/AskTheHandbook](https://huggingface.co/spaces/rishitpant/AskTheHandbook)
+
 Features:
 - Hybrid retrieval + cross-encoder reranking
 - Versioned prompts
@@ -122,7 +124,7 @@ RAG/
 
 ## Evaluation (`eval/evaluate.py`)
 
-- 10-question set (`eval/eval_prompts.json`), curated for category coverage, not size due to api rate limits
+- 20-question set (`eval/eval_prompts.json`), curated for category coverage, not size due to api rate limits
 - Weak-scoring questions are kept deliberately to surface gaps, not flatter the score
 
 **Pipeline per question:**
@@ -138,18 +140,17 @@ RAG/
 - Every run writes `eval/report.json`: model/prompt versions, per-metric averages, per-question breakdown, pass/fail gate
 - Judge model overridable via `JUDGE_MODEL` env var (default: `llama-3.3-70b-versatile`); CI uses `llama-3.1-8b-instant` for speed
 
-**Latest result** (10 questions, judge = `llama-3.3-70b-versatile`, threshold 0.5):
+**Latest result** (20 questions, judge = `llama-3.3-70b-versatile`, threshold 0.8):
 
 | Metric | Score |
 |---|---|
 | Keyword Hit Rate | 100% |
-| Faithfulness (avg) | 0.933 |
-| Answer Relevancy (avg) | 0.883 |
-| Contextual Precision (avg) | 0.817 |
-| **Gate** (min of keyword & faithfulness) | **0.933 — PASSED** |
+| Faithfulness (avg) | 91% |
+| Answer Relevancy (avg) | 91% |
+| Contextual Precision (avg) | 96% |
+| **Gate** (min of keyword & faithfulness) | **0.908 — PASSED** |
 
-- **Judge choice matters:** an 8B judge produced a gate score of 0.618 with false-zero faithfulness scores on verified-correct answers — it lacks reasoning capacity for compound eligibility/fee questions. The 70B judge raised the gate to 0.933, reflecting actual system quality. CI keeps the 8B model for speed; 70B is used for authoritative local runs.
-- **Known weak spot:** Contextual Precision dips to 0.25–0.58 on scheduling/fee-overlap questions — the right chunks are retrieved, but ranked lower than they should be.
+- **Judge choice matters:** an 8B judge produced a gate score of 0.618 with false-zero faithfulness scores on verified-correct answers — it lacks reasoning capacity for compound eligibility/fee questions. The 70B judge raised the gate to 0.908, reflecting actual system quality. CI keeps the 8B model for speed; 70B is used for local runs.
 
 ---
 
