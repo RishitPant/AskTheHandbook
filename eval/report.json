@@ -1,59 +1,47 @@
 {
-  "timestamp": "2026-06-13T19:26:39.889779",
+  "timestamp": "2026-06-20T17:32:44.634325",
   "judge_model": "llama-3.3-70b-versatile",
-  "threshold": 0.5,
+  "gen_model": "llama-3.3-70b-versatile",
+  "prompts_version": "1.4.0",
+  "threshold": 0.8,
   "category": null,
-  "num_questions": 10,
+  "num_questions": 20,
   "keyword_hit_rate": 1.0,
   "averages": {
-    "faithfulness": 0.9333,
-    "answer_relevancy": 0.8833,
-    "contextual_precision": 0.8167
+    "faithfulness": 0.9083,
+    "answer_relevancy": 0.911,
+    "contextual_precision": 0.9667
   },
-  "gate_score": 0.9333,
+  "gate_score": 0.9083,
   "passed": true,
   "per_question": [
     {
-      "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1 on August 1, 2026?",
+      "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1",
       "keyword_hit": true,
-      "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.8333,
-      "ContextualPrecisionMetric": 0.5833
-    },
-    {
-      "question": "What is the major grading change implemented for the weightage of GAA in Foundation Level courses?",
-      "keyword_hit": true,
-      "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.5,
+      "FaithfulnessMetric": 0.8,
+      "AnswerRelevancyMetric": 0.8,
       "ContextualPrecisionMetric": 1.0
     },
     {
-      "question": "Under what condition will the complete 10% weightage for the 3 Kaggle Assignments (KA) be calculated in Machine Learning Practice?",
-      "keyword_hit": true,
-      "FaithfulnessMetric": 0.6667,
-      "AnswerRelevancyMetric": 0.5,
-      "ContextualPrecisionMetric": 1.0
-    },
-    {
-      "question": "What mandatory passing score and structural requirement must be met in the DBMS OPPE to unlock the course grade?",
-      "keyword_hit": true,
-      "FaithfulnessMetric": 0.6667,
-      "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 1.0
-    },
-    {
-      "question": "What are the core courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
+      "question": "What is the mandatory passing criteria for DBMS OPPE?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 0.8333
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What are the courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.5,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What is the penalty and final cost if a student fails to pay the Registration Keep Alive (RKA) fee on time?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 0.5
+      "AnswerRelevancyMetric": 0.8333,
+      "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What happens to a student's status and their official email ID if they are on Academic Probation for 2 consecutive terms and do not register for the next term?",
@@ -66,18 +54,102 @@
       "question": "What are the specific requirements to earn an Advanced Certificate in Programming and Application Development?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 0.9,
+      "ContextualPrecisionMetric": 0.9167
+    },
+    {
+      "question": "How to get into MS at IITM?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 0.9167
+    },
+    {
+      "question": "What are the hardware and software system requirements for this degree?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.8,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 0.5
+    },
+    {
+      "question": "What are the NPTEL technical bucket and HS/MG course lists used for at the BS level?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.6,
+      "AnswerRelevancyMetric": 0.8889,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What does the handbook say about NPTEL credit transfer?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 0.6,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What alumni benefits do we get?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.9167,
       "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
-      "question": "What specific academic milestones and checkpoints must a student meet to prevent being removed from the Foundation level program?",
+      "question": "What is the grading formula for the System Commands (SC) course and what score must a student get in the OPPE to pass the course?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 0.6,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What is the fee structure for project courses and what happens if a student does not complete the project in the registered term?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.8,
+      "AnswerRelevancyMetric": 0.875,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What are the bonus marks in the grading document and do they count to get passing grade?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 0.25
+      "ContextualPrecisionMetric": 1.0
     },
     {
-      "question": "What are the financial administrative penalties for dropping a course within the 4-week window at different levels?",
+      "question": "What is the maximum number of terms allowed to complete both Diplomas, and what is the minimum pace a student must maintain from May 2024 onwards?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What are the checkpoints to enter degree level?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 0.8333,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What is the fee for the NPTEL credit transfer per credit, and are NPTEL courses included in the CGPA calculation?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What mandatory courses must a student complete at the BSc level before taking electives?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 0.75,
+      "AnswerRelevancyMetric": 0.8889,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "What is the grading formula for Software Engineering (SE) and what are its unique eligibility conditions to get the final course grade?",
+      "keyword_hit": true,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 1.0,
+      "ContextualPrecisionMetric": 1.0
+    },
+    {
+      "question": "When can I fill the exit form and what are the senate dates? If I fill exit form in next window, when will I get my original certificiate?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
