@@ -16,7 +16,7 @@ COLLECTION_NAME = "handbook_docs"
 EMBED_MODEL     = "BAAI/bge-small-en-v1.5"
 RERANK_MODEL    = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-HYBRID_TOP_K    = 8
+HYBRID_TOP_K    = 10
 FINAL_TOP_N     = 5
 
 ENSEMBLE_WEIGHTS = [0.6, 0.4]
