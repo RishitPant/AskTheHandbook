@@ -131,7 +131,7 @@ RAG/
 - Retrieve top-4 chunks via the full hybrid + rerank pipeline
 - Generate an answer with `llama-3.3-70b-versatile` (`eval_system` + shared `human` prompt, 150-token cap)
 - Fast keyword-hit check (no LLM) due to api rate limits
-- Three DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision
+- Three DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision.
 
 **Reliability features:**
 - Auto-retry with backoff on Groq 429s
