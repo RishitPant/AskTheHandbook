@@ -168,7 +168,7 @@ Current version: **1.4.0**
 ## CI/CD (`.github/workflows/ci.yaml`)
 
 On push to `main`:
-1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `llama-3.1-8b-instant` (`python eval/evaluate.py --no-deepeval --threshold 0.5`)
+1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `llama-3.1-8b-instant` (`python eval/evaluate.py --no-deepeval --threshold 0.8`)
 2. **Deploy** — if the gate passes, force-pushes the repo to the linked Hugging Face Space, which rebuilds the Docker image and redeploys
 
 - DeepEval (faithfulness/relevancy/precision) gate is **not yet wired into CI** due to api rate limits — roadmap item, planned for PRs into `main` only (~5–10 min throttled runtime)
