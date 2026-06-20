@@ -36,7 +36,7 @@ if not API_KEY:
 EVAL_DATA_PATH    = Path(__file__).parent / "eval_prompts.json"
 REPORT_PATH       = Path(__file__).parent / "report.json"
 CHECKPOINT_PATH   = Path(__file__).parent / "eval_checkpoint.json"
-DEFAULT_THRESHOLD = 0.5
+DEFAULT_THRESHOLD = 0.8
 JUDGE_MODEL = os.getenv("JUDGE_MODEL", "llama-3.3-70b-versatile")
 GEN_MODEL   = os.getenv("RAG_MODEL",   "llama-3.3-70b-versatile") 
 
@@ -47,7 +47,7 @@ if not PROMPTS_PATH.exists():
 
 _prompts        = yaml.safe_load(PROMPTS_PATH.read_text(encoding="utf-8"))
 PROMPTS_VERSION = _prompts.get("version", "unknown")
-EVAL_SYSTEM     = _prompts["eval_system"]
+EVAL_SYSTEM     = _prompts["system"]
 HUMAN_TEMPLATE  = _prompts["human"]
 
 # Retry / throttle settings
@@ -269,15 +269,15 @@ def run_evaluation(
         metrics = [
             FaithfulnessMetric(
                 threshold=threshold, model=judge,
-                include_reason=True, async_mode=False,
+                include_reason=False, async_mode=False,
             ),
             AnswerRelevancyMetric(
                 threshold=threshold, model=judge,
-                include_reason=True, async_mode=False,
+                include_reason=False, async_mode=False,
             ),
             ContextualPrecisionMetric(
                 threshold=threshold, model=judge,
-                include_reason=True, async_mode=False,
+                include_reason=False, async_mode=False,
             ),
         ]
 
@@ -306,9 +306,10 @@ def run_evaluation(
                 try:
                     m.measure(tc)
                     score  = m.score if m.score is not None else 0.0
-                    reason = (m.reason or "—")[:110]
+                    # reason = (m.reason or "—")[:300]
                     icon   = "✅" if score >= threshold else "❌"
-                    print(f"    {mname:<32} {icon} {score:.3f}  {reason}")
+                    # print(f"    {mname:<32} {icon} {score:.3f}  {reason}")
+                    print(f"    {mname:<32} {icon} {score:.3f}")
                 except RateLimitError as e:
                     score = 0.0
                     print(f"    {mname:<32} ⚠️  rate limit exhausted after {MAX_RETRIES} retries: {e}")
