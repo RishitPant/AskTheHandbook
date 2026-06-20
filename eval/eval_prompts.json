@@ -1,71 +1,253 @@
-[ {
-    "id": "grad_001",
-    "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1 on August 1, 2026?",
-    "expected_keywords": ["Python", "MLP", "C prog"],
+[
+  {
+    "id": "Q1",
+    "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1",
+    "expected_output": "On Day 1 of OPPE1 (Saturday, August 1, 2026), Python is scheduled from 2:30 PM to 4:30 PM. MLP and C are scheduled together from 6:00 PM to 8:00 PM the same day.",
+    "expected_keywords": [
+      "Python",
+      "MLP",
+      "C prog"
+    ],
     "source": "grading-document.md",
     "category": "schedules"
   },
   {
-    "id": "grad_002",
-    "question": "What is the major grading change implemented for the weightage of GAA in Foundation Level courses?",
-    "expected_keywords": ["0", "zero", "from the assignments"],
-    "source": "grading-document.md",
-    "category": "grading_policy"
-  },
-  {
-    "id": "grad_003",
-    "question": "Under what condition will the complete 10% weightage for the 3 Kaggle Assignments (KA) be calculated in Machine Learning Practice?",
-    "expected_keywords": ["Average score", "3 Kaggle Assignments"],
-    "source": "grading-document.md",
-    "category": "grading_policy"
-  },
-  {
-    "id": "grad_004",
-    "question": "What mandatory passing score and structural requirement must be met in the DBMS OPPE to unlock the course grade?",
-    "expected_keywords": ["minimum of 35%", "Python-Database connectivity", "correct"],
+    "id": "Q2",
+    "question": "What is the mandatory passing criteria for DBMS OPPE?",
+    "expected_output": "To get a course grade in DBMS, a student must attend the end-semester exam, score a minimum of 35% overall in the OPPE, and answer the Python-Database connectivity question correctly. The OPPE covers SQL queries (Week 2-3) and Python-Database connectivity (Week 7). Failing to reach 35% in the OPPE or failing the Python-DB connectivity question results in a fail in the OPPE.",
+    "expected_keywords": [
+      "minimum of 35%",
+      "Python-Database connectivity",
+      "correct"
+    ],
     "source": "grading-document.md",
     "category": "eligibility"
   },
   {
-    "id": "hand_005",
-    "question": "What are the core courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
-    "expected_keywords": ["Programming in C", "Computer System Design", "Operating Systems", "Computer Networks"],
+    "id": "Q3",
+    "question": "What are the courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
+    "expected_output": "The Minor in Computer Systems requires Programming in C (BSCS3005) as a prerequisite. The core courses are Computer System Design (BSCS3031), Operating Systems (BSCS4022), and Computer Networks (BSCS4024).",
+    "expected_keywords": [
+      "Programming in C",
+      "Computer System Design",
+      "Operating Systems",
+      "Computer Networks"
+    ],
     "source": "student-handbook.md",
     "category": "minors"
   },
   {
-    "id": "hand_006",
+    "id": "Q4",
     "question": "What is the penalty and final cost if a student fails to pay the Registration Keep Alive (RKA) fee on time?",
-    "expected_keywords": ["10% extra", "1100", "2200"],
+    "expected_output": "If a student does not pay the RKA fee on time, it remains pending and a 10% extra penalty is added when they re-register. The pending dues come to Rs 1100 for one missed term (Rs 1000 RKA + 10% penalty) or Rs 2200 for two missed terms (Rs 1000 RKA x 2 + 10% penalty per term). Once paid, the student's status changes back to 'On the rolls'.",
+    "expected_keywords": [
+      "10% extra",
+      "1100",
+      "2200"
+    ],
     "source": "student-handbook.md",
     "category": "fees"
   },
   {
-    "id": "grad_007",
+    "id": "Q5",
     "question": "What happens to a student's status and their official email ID if they are on Academic Probation for 2 consecutive terms and do not register for the next term?",
-    "expected_keywords": ["Struck off the rolls", "suspended"],
+    "expected_output": "If a learner on Academic Probation for 2 consecutive terms does not register for courses in the following term, their status changes to 'Struck off the rolls' and their official email ID is suspended.",
+    "expected_keywords": [
+      "Struck off the rolls",
+      "suspended"
+    ],
     "source": "student-handbook.md",
     "category": "administrative"
   },
   {
-    "id": "hand_008",
+    "id": "Q6",
     "question": "What are the specific requirements to earn an Advanced Certificate in Programming and Application Development?",
-    "expected_keywords": ["6 theory courses", "Diploma in Programming", "projects pending"],
+    "expected_output": "A student is awarded the Advanced Certificate in Programming and Application Development if they have completed all 6 theory courses of the Diploma in Programming, with one or both of the projects still pending.",
+    "expected_keywords": [
+      "6 theory courses",
+      "Diploma in Programming",
+      "projects pending"
+    ],
     "source": "student-handbook.md",
     "category": "certification"
   },
   {
-    "id": "hand_009",
-    "question": "What specific academic milestones and checkpoints must a student meet to prevent being removed from the Foundation level program?",
-    "expected_keywords": ["4 courses within 4 terms", "6 courses within 6 terms", "8 foundation courses within 9 terms"],
+    "id": "Q7",
+    "question": "How to get into MS at IITM?",
+    "expected_output": "There are several routes into IITM's on-campus MS program: (a) write the GATE exam and apply to IITM's MTech/MS/PhD programs using the GATE score/rank; (b) apply as a CFTI student if you have a CGPA >= 8.0 in IITM's BS program, which does not require a GATE score; (c) apply as a Project staff if you are appointed to a faculty project at IITM, making you eligible for project-based MS admission; or (d) upgrade directly to the on-campus MS program.",
+    "expected_keywords": [
+      "GATE",
+      "CGPA>= 8.0",
+      "Project staff",
+      "on-campus MS program"
+    ],
+    "source": "student-handbook.md",
+    "category": "masters"
+  },
+  {
+    "id": "Q8",
+    "question": "What are the hardware and software system requirements for this degree?",
+    "expected_output": "Students need a laptop/desktop with minimum 8GB RAM, Intel 8th Gen or AMD 4th Gen processor, 500GB storage, Windows 10 / Ubuntu 20.04 / Mac OS Mojave, latest Chrome browser, and minimum 2 MBPS internet connection.",
+    "expected_keywords": [
+      "8 GB",
+      "Chrome",
+      "2 MBPS",
+      "Windows 10"
+    ],
+    "source": "student-handbook.md",
+    "category": "technical"
+  },
+  {
+    "id": "Q9",
+    "question": "What are the NPTEL technical bucket and HS/MG course lists used for at the BS level?",
+    "expected_output": "At the BS level, students must earn 4 credits in the HS/MG category, which can come either from in-house electives or from the NPTEL HS/MG approved course list (HSMG). Separately, a maximum of 4 credits can be obtained from the NPTEL Technical Bucket list of approved Dep/Free elective courses, which counts toward the department/free elective requirement.",
+    "expected_keywords": [
+      "Technical Bucket",
+      "HSMG",
+      "NPTEL",
+      "BS level"
+    ],
+    "source": "grading-document.md",
+    "category": "electives"
+  },
+  {
+    "id": "Q10",
+    "question": "What does the handbook say about NPTEL credit transfer?",
+    "expected_output": "Under Credit Transfer for NPTEL Courses, an NPTEL course of 4/8/12 weeks duration carries 1/2/3 credits respectively in the BS program. Students must register for the NPTEL exam using their official IITM email, complete the course, and pay a credit transfer fee. Each NPTEL course can only be transferred once, to one program. The courses are added in PASS/FAIL mode and do not count toward CGPA.",
+    "expected_keywords": [
+      "Credit Transfer for NPTEL Courses",
+      "BS level",
+      "fee"
+    ],
+    "source": "student-handbook.md",
+    "category": "credit_transfer"
+  },
+  {
+    "id": "Q11",
+    "question": "What alumni benefits do we get?",
+    "expected_output": "IITM alumni cardholders get access to several benefits, including Job Portal access for career opportunities, discounts from alumni companies, travel-related benefits, and Voting Rights to participate in IITMAA elections, along with access to alumni expert sessions and discussion groups.",
+    "expected_keywords": [
+      "Job portal",
+      "Discounts",
+      "Travel",
+      "Voting Rights"
+    ],
+    "source": "student-handbook.md",
+    "category": "alumni"
+  },
+  {
+    "id": "Q12",
+    "question": "What is the grading formula for the System Commands (SC) course and what score must a student get in the OPPE to pass the course?",
+    "expected_output": "The final course score for System Commands is T = 0.05 GAA + 0.25 Qz1 + 0.3 OPPE + 0.3F + 0.1 BPTA, where GAA is the average of the best 9 of 10 weekly graded assignments, BPTA is the average of the 4 BPT scores, Qz1 is the Quiz I score, OPPE is the online proctored programming exam score, and F is the End Term score. To get the course grade, a student must attend the end-semester exam and score at least 40/100 in the OPPE.",
+    "expected_keywords": [
+      "0.05 GAA",
+      "0.3 OPPE",
+      "40/100",
+      "BPT"
+    ],
+    "source": "grading-document.md",
+    "category": "grading_policy"
+  },
+  {
+    "id": "Q13",
+    "question": "What is the fee structure for project courses and what happens if a student does not complete the project in the registered term?",
+    "expected_output": "Each project course (e.g. BDM, MLP, App Dev 1, App Dev 2, DL-GenAI project) has a fee of Rs 2500, and the fee paid is valid for 2 terms. If a student does not complete the project in the registered term, the fee is retained for the subsequent term and the grade is marked as 'I'. If the project is still not completed by the end of the second term, the registration becomes invalid, the student must pay the full fee again, and they receive a 'U' grade.",
+    "expected_keywords": [
+      "2500",
+      "valid for 2 terms",
+      "I grade",
+      "U grade"
+    ],
+    "source": "grading-document.md",
+    "category": "fees"
+  },
+  {
+    "id": "Q14",
+    "question": "What are the bonus marks in the grading document and do they count to get passing grade?",
+    "expected_output": "Bonus marks are awarded to encourage participation, for example based on mock test performance before Quiz 1 and Quiz 2, or for additional course-specific activities at the instructor's discretion. These bonus marks are added only for students who pass the course and affect the final course grade, but they are explicitly not the pass criteria — a student must still independently satisfy the 40/100 (or equivalent) eligibility thresholds to pass.",
+    "expected_keywords": [
+      "only for students who pass",
+      "not the pass criteria",
+      "mock tests",
+      "40/100"
+    ],
+    "source": "grading-document.md",
+    "category": "grading_policy"
+  },
+  {
+    "id": "Q15",
+    "question": "What is the maximum number of terms allowed to complete both Diplomas, and what is the minimum pace a student must maintain from May 2024 onwards?",
+    "expected_output": "The maximum number of terms allowed to complete both Diplomas is 12. From May 2024 onwards, students must maintain a minimum pace of completing 3 courses and 1 project every 3 terms. If this pace is not maintained by the end of 3 terms, the student receives a warning; if the cumulative pace (6/9/12 courses and 2/3/4 projects in 6/9/12 terms) is not met, the student is removed from the program.",
+    "expected_keywords": [
+      "12",
+      "3 courses and 1 project",
+      "3 terms",
+      "removed from the program"
+    ],
+    "source": "grading-document.md",
+    "category": "administrative"
+  },
+  {
+  "id": "Q16",
+  "question": "What are the checkpoints to enter degree level?",
+  "expected_output": "To enter degree level, students should complete the foundation + diploma level in a total of 5 years. The CGPA at the end of diploma level must be >= 6.0, and CGPA of projects must be >= 7.0",
+  "expected_keywords": [
+    "5 years",
+    "CGPA",
+    "projects"
+  ],
+  "source": "student-handbook.md",
+  "category": "eligibility"
+  },
+  {
+    "id": "Q17",
+    "question": "What is the fee for the NPTEL credit transfer per credit, and are NPTEL courses included in the CGPA calculation?",
+    "expected_output": "The fee for NPTEL credit transfer is fixed at Rs 1000 per credit (so Rs 1000, 2000, or 3000 for 4/8/12-week courses respectively). NPTEL courses are added in PASS/FAIL mode and will not be included in the CGPA calculation.",
+    "expected_keywords": [
+      "Rs 1000",
+      "per credit",
+      "PASS/FAIL",
+      "not be included in the CGPA"
+    ],
+    "source": "student-handbook.md",
+    "category": "credit_transfer"
+  },
+  {
+    "id": "Q18",
+    "question": "What mandatory courses must a student complete at the BSc level before taking electives?",
+    "expected_output": "Students entering the BSc level are required to mandatorily take Software Engineering, Software Testing, Artificial Intelligence, and Deep Learning, along with the mandatory course Strategies for Professional Growth. Elective courses can be added alongside these mandatory courses or after completing them, subject to a maximum of 4 courses per term.",
+    "expected_keywords": [
+      "Software Engineering",
+      "Software Testing",
+      "Artificial Intelligence",
+      "Deep Learning",
+      "Strategies for Professional Growth"
+    ],
     "source": "student-handbook.md",
     "category": "eligibility"
   },
   {
-    "id": "hand_010",
-    "question": "What are the financial administrative penalties for dropping a course within the 4-week window at different levels?",
-    "expected_keywords": ["Rs 2000", "Foundation", "Rs 4000", "Diploma", "Degree"],
+    "id": "Q19",
+    "question": "What is the grading formula for Software Engineering (SE) and what are its unique eligibility conditions to get the final course grade?",
+    "expected_output": "The final course score for Software Engineering is T = 0.05GAA + 0.2Qz2 + 0.4F + 0.1GP1 + 0.1GP2 + 0.1PP + 0.05CP. To get the final course grade, a student must attend the End Term exam, submit all milestones of the group project, and have a score in the group project greater than 0 — submission of all milestones is mandatory regardless of other scores.",
+    "expected_keywords": [
+      "group project",
+      "score in group project > 0",
+      "0.4F",
+      "milestones"
+    ],
+    "source": "grading-document.md",
+    "category": "grading_policy"
+  },
+  {
+    "id": "Q20",
+    "question": "When can I fill the exit form and what are the senate dates? If I fill exit form in next window, when will I get my original certificiate?",
+    "expected_output": "The next exit form window is open from June 20, 2026 to July 15, 2026, ahead of the Senate date on August 21, 2026. If a student fills the exit form in this window, the tentative original certificate processing date is November 25, 2026. Senate meetings are held four times a year, and Senate approval is required before the original certificate can be generated.",
+    "expected_keywords": [
+      "November",
+      "June"
+    ],
     "source": "student-handbook.md",
-    "category": "fees"
+    "category": "administrative"
   }
 ]
