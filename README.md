@@ -12,7 +12,7 @@ app_port: 7860
 
 A production-style RAG system that answers student questions about the IITM BS Degree Programme (fees, grading, exams, eligibility, academic structure) strictly grounded in the official handbook and grading documents, with source citations.
 
-🔗 **Live demo:** [huggingface.co/spaces/rishitpant/AskTheHandbook](https://huggingface.co/spaces/rishitpant/AskTheHandbook)
+🔗 **Live demo:** [huggingface.co/spaces/rishitpant/AskTheHandbook](https://huggingface.co/spaces/rishitpant/AskTheHandbook-2)
 
 Features:
 - Hybrid retrieval + cross-encoder reranking
