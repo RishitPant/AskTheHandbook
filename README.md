@@ -23,6 +23,8 @@ Features:
 - CI quality gate with auto-deploy to Hugging Face Spaces
 - FastAPI backend + web chat UI, Dockerized for production
 
+> **Note:** Originally built on Groq's `llama-3.3-70b-versatile` / `llama-3.1-8b-instant`. Both were decommissioned by Groq; the project was migrated to `openai/gpt-oss-120b` / `openai/gpt-oss-20b` (also served via Groq). See [Migration notes](#migration-notes-llama--gpt-oss) below.
+
 ---
 
 ## Architecture
@@ -40,7 +42,7 @@ question  →  retrieve.py  ─────────────────�
                   │
 generate.py  →  prompts.yaml (versioned prompts)
                   │
-          Groq LLM (llama-3.3-70b-versatile), streamed
+          Groq LLM (openai/gpt-oss-120b), streamed
                   │
           Grounded answer + cited sources
                   │
@@ -68,8 +70,9 @@ RAG/
 │   ├── generate.py                # Generator class, RAG chain + CLI chat
 │   └── tracing.py                 # Langfuse observability (opt-in)
 ├── eval/
-│   ├── eval_prompts.json          # 10-question set
+│   ├── eval_prompts.json          # 20-question set
 │   ├── evaluate.py                # DeepEval harness
+│   ├── phase1_cache.json          # generation cache (auto-created, cleared on pass)
 │   └── report.json                # latest run's results
 ├── db/                            # local ChromaDB vector store (generated)
 ├── prompts.yaml                   # versioned prompts (prod + eval)
@@ -101,7 +104,7 @@ RAG/
 - Prompts loaded from `prompts.yaml` (not hardcoded), version printed at startup
 - System prompt enforces: strict grounding, no hallucination, table extraction, mandatory citations, defining acronyms, flagging overlapping fee figures, one course at a time
 - Streams tokens via Groq's OpenAI-compatible endpoint
-- Model overridable via `RAG_MODEL` env var (default: `llama-3.3-70b-versatile`)
+- Model overridable via `RAG_MODEL` env var (default: `openai/gpt-oss-120b`)
 - `get_sources()` returns the deduplicated source list for the last answer
 - Each turn wrapped in an `@observe` span for tracing
 
@@ -129,35 +132,47 @@ RAG/
 
 **Pipeline per question:**
 - Retrieve top-4 chunks via the full hybrid + rerank pipeline
-- Generate an answer with `llama-3.3-70b-versatile` (`eval_system` + shared `human` prompt, 150-token cap)
+- Generate an answer with `openai/gpt-oss-120b`, using the full production `system` prompt (not a separate lightweight prompt) so the eval reflects real production output, `max_tokens=1200`
 - Fast keyword-hit check (no LLM) due to api rate limits
-- Three DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision.
+- Three DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision. Judge calls use `reasoning_effort="low"` (see migration notes) and `max_tokens=2048`
 
 **Reliability features:**
 - Auto-retry with backoff on Groq 429s
+- Judge-level retry (up to 3 attempts) on empty/unparseable JSON responses, independent of rate-limit retries
 - Throttling between calls/metrics to stay under rate limits
 - Per-question checkpointing (`eval_checkpoint.json`) — resumes after a crash, clears on a clean pass
+- Phase 1 generation cache (`phase1_cache.json`) — resuming after a crash reuses already-generated answers instead of re-calling the LLM for every question; clears on a clean pass
 - Every run writes `eval/report.json`: model/prompt versions, per-metric averages, per-question breakdown, pass/fail gate
-- Judge model overridable via `JUDGE_MODEL` env var (default: `llama-3.3-70b-versatile`); CI uses `llama-3.1-8b-instant` for speed
+- Judge model overridable via `JUDGE_MODEL` env var (default: `openai/gpt-oss-120b`); CI uses `openai/gpt-oss-20b` for speed
 
-**Latest result** (20 questions, judge = `llama-3.3-70b-versatile`, threshold 0.8):
+**Latest result** (20 questions, judge = `openai/gpt-oss-120b`, threshold 0.8, clean full run — no cached/checkpointed state carried over):
 
 | Metric | Score |
 |---|---|
-| Keyword Hit Rate | 100% |
-| Faithfulness (avg) | 91% |
-| Answer Relevancy (avg) | 91% |
-| Contextual Precision (avg) | 96% |
-| **Gate** (min of keyword & faithfulness) | **0.908 — PASSED** |
+| Keyword Hit Rate | 90% |
+| Faithfulness (avg) | 98.0% |
+| Answer Relevancy (avg) | 96.7% |
+| Contextual Precision (avg) | 91.7% |
+| **Gate** (min of keyword & faithfulness) | **0.980 — PASSED** |
 
-- **Judge choice matters:** an 8B judge produced a gate score of 0.618 with false-zero faithfulness scores on verified-correct answers — it lacks reasoning capacity for compound eligibility/fee questions. The 70B judge raised the gate to 0.908, reflecting actual system quality. CI keeps the 8B model for speed; 70B is used for local runs.
+For reference, the last recorded result under the original `llama-3.3-70b-versatile` judge was Faithfulness 91% / Answer Relevancy 91% / Contextual Precision 96%, gate 0.908. The gpt-oss-120b judge scores comparably or better on faithfulness and relevancy, with a modest dip on contextual precision — a known, model-agnostic retrieval/reranking gap tracked under [What's next](#whats-next), not a judge-quality issue.
+
+---
+
+## Migration notes: Llama → gpt-oss
+
+Groq decommissioned `llama-3.1-8b-instant` and `llama-3.3-70b-versatile` with no advance notice, forcing a mid-project migration to `openai/gpt-oss-120b` / `openai/gpt-oss-20b`. The swap itself (env vars, hardcoded defaults) was mechanical, but it surfaced two real bugs and one model-family behavior difference that a naive swap would have missed:
+
+1. **Stale `system`/`eval_system` prompt selection.** `evaluate.py` was loading the full production `system` prompt into a variable named `EVAL_SYSTEM`, rather than the separate leaner `eval_system` prompt defined in `prompts.yaml` for exactly this purpose. This had gone unnoticed under Llama because its answers happened to stay short. Decision made to keep the full `system` prompt for eval (test what production actually outputs) rather than switch to the leaner one, and size `max_tokens` accordingly.
+2. **Output-length mismatch.** gpt-oss defaults to a more structured, verbose answer style (headings, tables) than Llama did. Combined with an eval `max_tokens` cap sized for Llama's terser output, answers were getting truncated before their keyword-bearing content — collapsing the keyword-hit rate from 100% to 10% despite no real quality regression. Fixed by raising `max_tokens` (150 → 1200 for generation).
+3. **Reasoning-token budget consumption.** gpt-oss models are reasoning models; Groq's `reasoning_effort` parameter (default `medium`) lets them spend part of the token budget on hidden reasoning before the visible answer. Under DeepEval's structured JSON-mode judge calls, this intermittently consumed the entire budget, causing either truncated or fully empty judge responses. Fixed by setting `reasoning_effort="low"` on judge calls and raising the judge's own `max_tokens` (1024 → 2048), plus adding retry logic for any remaining transient failures.
 
 ---
 
 ## Prompt versioning (`prompts.yaml`)
 
-- `system` — full production system prompt (`generate.py`)
-- `eval_system` — leaner version for the 150-token eval budget, same core grounding/refusal behavior
+- `system` — full production system prompt (`generate.py`), also used by `evaluate.py` for eval fidelity
+- `eval_system` — a leaner, lower-token-budget alternative prompt, reserved for a future lightweight/cheap eval mode
 - `human` — shared `{context}` / `{question}` template for both prod and eval
 - `version` — bumped on any prompt change, recorded in every `report.json`
 
@@ -168,7 +183,7 @@ Current version: **1.4.0**
 ## CI/CD (`.github/workflows/ci.yaml`)
 
 On push to `main`:
-1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `llama-3.1-8b-instant` (`python eval/evaluate.py --no-deepeval --threshold 0.8`)
+1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `openai/gpt-oss-20b` (`python eval/evaluate.py --no-deepeval --threshold 0.8`)
 2. **Deploy** — if the gate passes, force-pushes the repo to the linked Hugging Face Space, which rebuilds the Docker image and redeploys
 
 - DeepEval (faithfulness/relevancy/precision) gate is **not yet wired into CI** due to api rate limits — roadmap item, planned for PRs into `main` only (~5–10 min throttled runtime)
@@ -231,7 +246,7 @@ LANGFUSE_HOST=https://cloud.langfuse.com
 
 ## Tech stack
 
-LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-small-en-v1.5` embeddings · `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker · Groq (`llama-3.3-70b-versatile`) · FastAPI · slowapi · DeepEval · Langfuse · GitHub Actions · Docker · Hugging Face Spaces
+LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-small-en-v1.5` embeddings · `cross-encoder/ms-marco-MiniLM-L-6-v2` reranker · Groq (`openai/gpt-oss-120b` / `openai/gpt-oss-20b`) · FastAPI · slowapi · DeepEval · Langfuse · GitHub Actions · Docker · Hugging Face Spaces
 
 ---
 
