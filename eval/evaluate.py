@@ -1,4 +1,3 @@
-
 import os
 import sys
 import json
@@ -36,9 +35,10 @@ if not API_KEY:
 EVAL_DATA_PATH    = Path(__file__).parent / "eval_prompts.json"
 REPORT_PATH       = Path(__file__).parent / "report.json"
 CHECKPOINT_PATH   = Path(__file__).parent / "eval_checkpoint.json"
+PHASE1_CACHE_PATH = Path(__file__).parent / "phase1_cache.json"
 DEFAULT_THRESHOLD = 0.8
-JUDGE_MODEL = os.getenv("JUDGE_MODEL", "llama-3.3-70b-versatile")
-GEN_MODEL   = os.getenv("RAG_MODEL",   "llama-3.3-70b-versatile") 
+JUDGE_MODEL = os.getenv("JUDGE_MODEL", "openai/gpt-oss-120b")
+GEN_MODEL   = os.getenv("RAG_MODEL",   "openai/gpt-oss-120b") 
 
 PROMPTS_PATH = ROOT / "prompts.yaml"
 if not PROMPTS_PATH.exists():
@@ -110,29 +110,50 @@ class GroqJudge(DeepEvalBaseLLM):
         return self._client
 
     def generate(self, prompt: str, schema: BaseModel = None):
-        client = self.load_model()
-        kwargs = dict(
-            model=self.model_name,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            max_tokens=1024,
-        )
-        if schema is not None:
-            kwargs["response_format"] = {"type": "json_object"}
+            client = self.load_model()
+            kwargs = dict(
+                model=self.model_name,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.0,
+                max_tokens=2048,
+                reasoning_effort="low"
+            )
+            if schema is not None:
+                kwargs["response_format"] = {"type": "json_object"}
 
-        response = groq_call_with_retry(client.chat.completions.create, **kwargs)
-        raw = response.choices[0].message.content.strip()
-
-        if schema is not None:
-            for candidate in [raw] + raw.split("```"):
-                candidate = candidate.lstrip("json").strip()
+            JSON_RETRIES = 3
+            last_err = None
+            for attempt in range(1, JSON_RETRIES + 1):
                 try:
-                    return schema(**json.loads(candidate))
-                except Exception:
+                    response = groq_call_with_retry(client.chat.completions.create, **kwargs)
+                    raw = response.choices[0].message.content.strip()
+                except Exception as e:
+                    last_err = e
+                    print(f"    ⏳ judge call failed (attempt {attempt}/{JSON_RETRIES}): {e}")
+                    time.sleep(2 * attempt)
                     continue
-            raise ValueError(f"GroqJudge: could not parse schema: {raw[:200]}")
 
-        return raw
+                if schema is None:
+                    return raw
+
+                if not raw:
+                    last_err = ValueError("GroqJudge: empty response from judge")
+                    print(f"    ⏳ empty judge response, retrying (attempt {attempt}/{JSON_RETRIES})")
+                    time.sleep(2 * attempt)
+                    continue
+
+                for candidate in [raw] + raw.split("```"):
+                    candidate = candidate.lstrip("json").strip()
+                    try:
+                        return schema(**json.loads(candidate))
+                    except Exception:
+                        continue
+
+                last_err = ValueError(f"GroqJudge: could not parse schema: {raw[:200]}")
+                print(f"    ⏳ schema parse failed, retrying (attempt {attempt}/{JSON_RETRIES})")
+                time.sleep(2 * attempt)
+
+            raise last_err if last_err else ValueError("GroqJudge: failed after retries")
 
     async def a_generate(self, prompt: str, schema: BaseModel = None):
         return self.generate(prompt, schema)
@@ -159,7 +180,8 @@ def generate_answer(question: str, chunks: list[dict], client: Groq) -> str:
             {"role": "user",   "content": user_prompt},
         ],
         temperature=0.0,
-        max_tokens=150,
+        max_tokens=1200,
+        reasoning_effort="low"
     )
     return response.choices[0].message.content.strip()
 
@@ -187,6 +209,21 @@ def _load_checkpoint() -> dict:
 def _save_checkpoint(data: dict) -> None:
     CHECKPOINT_PATH.write_text(json.dumps(data, indent=2))
 
+
+# ── Phase 1 cache helpers (avoids re-generating answers on resume)
+
+def _load_phase1_cache() -> dict:
+    """Return previously generated answers/chunks, keyed by question id."""
+    if PHASE1_CACHE_PATH.exists():
+        try:
+            return json.loads(PHASE1_CACHE_PATH.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def _save_phase1_cache(data: dict) -> None:
+    PHASE1_CACHE_PATH.write_text(json.dumps(data, indent=2))
 
 
 def run_evaluation(
@@ -224,6 +261,10 @@ def run_evaluation(
 
     print("\nPhase 1 — Retrieve & Generate\n" + "-" * 40)
 
+    phase1_cache = _load_phase1_cache()
+    if phase1_cache:
+        print(f"  📂 Phase 1 cache found — {len(phase1_cache)} question(s) already generated\n")
+
     test_cases  : list[LLMTestCase] = []
     kw_hits     : list[bool]        = []
     item_map    : list[dict]        = []
@@ -231,12 +272,22 @@ def run_evaluation(
 
     for i, item in enumerate(eval_data, 1):
         question = item["question"]
+        qid = item["id"]
         print(f"  [{i:02d}/{len(eval_data)}] {question[:70]}")
 
-        chunks   = retriever.retrieve(question, top_n=4)
-        answer   = generate_answer(question, chunks, groq_client)
-        contexts = [c["text"][:1000] for c in chunks]
-        scores   = [round(c["rerank_score"], 3) for c in chunks]
+        if qid in phase1_cache:
+            cached   = phase1_cache[qid]
+            answer   = cached["answer"]
+            contexts = cached["contexts"]
+            scores   = cached["scores"]
+            print(f"         ↩️  cached (skipped generation)")
+        else:
+            chunks   = retriever.retrieve(question, top_n=4)
+            answer   = generate_answer(question, chunks, groq_client)
+            contexts = [c["text"][:1000] for c in chunks]
+            scores   = [round(c["rerank_score"], 3) for c in chunks]
+            phase1_cache[qid] = {"answer": answer, "contexts": contexts, "scores": scores}
+            _save_phase1_cache(phase1_cache)
 
         kw = keyword_hit(answer, item["expected_keywords"])
         kw_hits.append(kw)
@@ -306,9 +357,7 @@ def run_evaluation(
                 try:
                     m.measure(tc)
                     score  = m.score if m.score is not None else 0.0
-                    # reason = (m.reason or "—")[:300]
                     icon   = "✅" if score >= threshold else "❌"
-                    # print(f"    {mname:<32} {icon} {score:.3f}  {reason}")
                     print(f"    {mname:<32} {icon} {score:.3f}")
                 except RateLimitError as e:
                     score = 0.0
@@ -403,6 +452,9 @@ def run_evaluation(
         if CHECKPOINT_PATH.exists():
             CHECKPOINT_PATH.unlink()
             print("  🗑️  Checkpoint cleared.\n")
+        if PHASE1_CACHE_PATH.exists():
+            PHASE1_CACHE_PATH.unlink()
+            print("  🗑️  Phase 1 cache cleared.\n")
         sys.exit(0)
     else:
         print(f"\n  ❌ FAILED — Quality dropped below threshold ({threshold:.0%})")
