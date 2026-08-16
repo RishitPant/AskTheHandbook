@@ -37,8 +37,8 @@ jobs:
           CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
           CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
           CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
-          RAG_MODEL: llama-3.1-8b-instant
-          JUDGE_MODEL: llama-3.1-8b-instant
+          RAG_MODEL: openai/gpt-oss-20b
+          JUDGE_MODEL: openai/gpt-oss-20b
         run: |
           python eval/evaluate.py \
             --no-deepeval \
