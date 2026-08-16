@@ -46,7 +46,7 @@ class Generator:
         print("Initializing retrieval system...")
         self.retriever = Retriever()
 
-        MODEL = os.getenv("RAG_MODEL", "llama-3.3-70b-versatile")
+        MODEL = os.getenv("RAG_MODEL", "openai/gpt-oss-120b")
         self.model_name = MODEL
         self.llm_client = OpenAI(
             base_url="https://api.groq.com/openai/v1",
