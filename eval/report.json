@@ -1,25 +1,25 @@
 {
-  "timestamp": "2026-06-20T17:32:44.634325",
-  "judge_model": "llama-3.3-70b-versatile",
-  "gen_model": "llama-3.3-70b-versatile",
+  "timestamp": "2026-08-16T23:15:21.115250",
+  "judge_model": "openai/gpt-oss-120b",
+  "gen_model": "openai/gpt-oss-120b",
   "prompts_version": "1.4.0",
   "threshold": 0.8,
   "category": null,
   "num_questions": 20,
-  "keyword_hit_rate": 1.0,
+  "keyword_hit_rate": 0.9,
   "averages": {
-    "faithfulness": 0.9083,
-    "answer_relevancy": 0.911,
-    "contextual_precision": 0.9667
+    "faithfulness": 0.9799,
+    "answer_relevancy": 0.9672,
+    "contextual_precision": 0.9167
   },
-  "gate_score": 0.9083,
+  "gate_score": 0.9,
   "passed": true,
   "per_question": [
     {
       "question": "Which programming exams are scheduled specifically for Day 1 of OPPE1",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.8,
-      "AnswerRelevancyMetric": 0.8,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
@@ -32,15 +32,15 @@
     {
       "question": "What are the courses required to earn a Minor in Computer Systems, and what is its prerequisite?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.5,
+      "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What is the penalty and final cost if a student fails to pay the Registration Keep Alive (RKA) fee on time?",
-      "keyword_hit": true,
+      "keyword_hit": false,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.8333,
+      "AnswerRelevancyMetric": 0.9,
       "ContextualPrecisionMetric": 1.0
     },
     {
@@ -48,13 +48,13 @@
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 1.0
+      "ContextualPrecisionMetric": 0.5
     },
     {
       "question": "What are the specific requirements to earn an Advanced Certificate in Programming and Application Development?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.9,
+      "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 0.9167
     },
     {
@@ -62,33 +62,33 @@
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 0.9167
+      "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What are the hardware and software system requirements for this degree?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.8,
+      "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 0.5
     },
     {
       "question": "What are the NPTEL technical bucket and HS/MG course lists used for at the BS level?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.6,
-      "AnswerRelevancyMetric": 0.8889,
+      "FaithfulnessMetric": 0.875,
+      "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What does the handbook say about NPTEL credit transfer?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.6,
+      "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What alumni benefits do we get?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.9167,
+      "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
@@ -96,35 +96,35 @@
       "question": "What is the grading formula for the System Commands (SC) course and what score must a student get in the OPPE to pass the course?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.6,
+      "AnswerRelevancyMetric": 0.8,
       "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What is the fee structure for project courses and what happens if a student does not complete the project in the registered term?",
-      "keyword_hit": true,
-      "FaithfulnessMetric": 0.8,
-      "AnswerRelevancyMetric": 0.875,
-      "ContextualPrecisionMetric": 1.0
+      "keyword_hit": false,
+      "FaithfulnessMetric": 1.0,
+      "AnswerRelevancyMetric": 0.8182,
+      "ContextualPrecisionMetric": 0.5
     },
     {
       "question": "What are the bonus marks in the grading document and do they count to get passing grade?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
       "AnswerRelevancyMetric": 1.0,
-      "ContextualPrecisionMetric": 1.0
+      "ContextualPrecisionMetric": 0.9167
     },
     {
       "question": "What is the maximum number of terms allowed to complete both Diplomas, and what is the minimum pace a student must maintain from May 2024 onwards?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 1.0,
+      "AnswerRelevancyMetric": 0.9167,
       "ContextualPrecisionMetric": 1.0
     },
     {
       "question": "What are the checkpoints to enter degree level?",
       "keyword_hit": true,
       "FaithfulnessMetric": 1.0,
-      "AnswerRelevancyMetric": 0.8333,
+      "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     },
     {
@@ -137,8 +137,8 @@
     {
       "question": "What mandatory courses must a student complete at the BSc level before taking electives?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 0.75,
-      "AnswerRelevancyMetric": 0.8889,
+      "FaithfulnessMetric": 0.8889,
+      "AnswerRelevancyMetric": 0.9091,
       "ContextualPrecisionMetric": 1.0
     },
     {
@@ -151,7 +151,7 @@
     {
       "question": "When can I fill the exit form and what are the senate dates? If I fill exit form in next window, when will I get my original certificiate?",
       "keyword_hit": true,
-      "FaithfulnessMetric": 1.0,
+      "FaithfulnessMetric": 0.8333,
       "AnswerRelevancyMetric": 1.0,
       "ContextualPrecisionMetric": 1.0
     }
