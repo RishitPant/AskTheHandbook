@@ -283,7 +283,7 @@ def run_evaluation(
             scores   = cached["scores"]
             print(f"         ↩️  cached (skipped generation)")
         else:
-            chunks   = retriever.retrieve(question, top_n=6)
+            chunks   = retriever.retrieve(question, top_n=4)
             answer   = generate_answer(question, chunks, groq_client)
             contexts = [c["text"] for c in chunks]
             scores   = [round(c["rerank_score"], 3) for c in chunks]
@@ -404,7 +404,7 @@ def run_evaluation(
         print(f"  Faithfulness (avg)         : {avg_faith:.3f}  {'✅' if avg_faith >= threshold else '❌'}")
         print(f"  Answer Relevancy (avg)     : {avg_rel:.3f}  {'✅' if avg_rel   >= threshold else '❌'}")
         print(f"  Contextual Precision (avg) : {avg_prec:.3f}  {'✅' if avg_prec  >= threshold else '❌'}")
-        print(f"  Contextual Recall (avg) : {avg_prec:.3f}  {'✅' if avg_rec  >= threshold else '❌'}")
+        print(f"  Contextual Recall (avg) : {avg_rec:.3f}  {'✅' if avg_rec  >= threshold else '❌'}")
 
         print("\n  Per-question breakdown:")
         header = f"  {'ID':<28} {'kw':>3}  {'Faith':>6}  {'Rel':>6}  {'Prec':>6}"
