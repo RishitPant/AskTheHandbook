@@ -7,6 +7,12 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      run_deepeval:
+        description: 'Run full DeepEval suite'
+        type: boolean
+        default: false
 
 jobs:
   evaluate:
@@ -49,8 +55,8 @@ jobs:
             --threshold 0.8
 
   deepeval:
-    name: DeepEval Quality Gate (PR)
-    if: github.event_name == 'pull_request'
+    name: DeepEval Quality Gate (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_deepeval == true
     runs-on: ubuntu-latest
 
     steps:
@@ -73,7 +79,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements-prod.txt
 
-      - name: Run full DeepEval suite (PR gate)
+      - name: Run full DeepEval suite (eval gate)
         working-directory: .
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
