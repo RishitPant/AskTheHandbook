@@ -17,10 +17,10 @@ A production-style RAG system that answers student questions about the IITM BS D
 Features:
 - Hybrid retrieval + cross-encoder reranking
 - Versioned prompts
-- Automated evaluation harness with checkpointing
+- Automated evaluation harness with checkpointing (Faithfulness, Answer Relevancy, Contextual Precision, Contextual Recall)
 - Langfuse observability
 - Rate limiting via `slowapi` (5 requests/minute per IP, proxy-aware)
-- CI quality gate with auto-deploy to Hugging Face Spaces
+- CI quality gate (keyword, automatic) + full DeepEval gate (manual, on-demand) with auto-deploy to Hugging Face Spaces
 - FastAPI backend + web chat UI, Dockerized for production
 
 > **Note:** Originally built on Groq's `llama-3.3-70b-versatile` / `llama-3.1-8b-instant`. Both were decommissioned by Groq; the project was migrated to `openai/gpt-oss-120b` / `openai/gpt-oss-20b` (also served via Groq). See [Migration notes](#migration-notes-llama--gpt-oss) below.
@@ -70,7 +70,7 @@ RAG/
 │   ├── generate.py                # Generator class, RAG chain + CLI chat
 │   └── tracing.py                 # Langfuse observability (opt-in)
 ├── eval/
-│   ├── eval_prompts.json          # 20-question set
+│   ├── eval_prompts.json          # 20-question set, with per-question reference answers
 │   ├── evaluate.py                # DeepEval harness
 │   ├── phase1_cache.json          # generation cache (auto-created, cleared on pass)
 │   └── report.json                # latest run's results
@@ -79,7 +79,7 @@ RAG/
 ├── Dockerfile
 ├── requirements.txt               # full dev environment
 ├── requirements-prod.txt          # slim deps for Docker/CI
-└── .github/workflows/ci.yaml      # eval gate + HF Spaces deploy
+└── .github/workflows/ci.yaml      # eval gates + HF Spaces deploy
 ```
 ---
 
@@ -96,7 +96,7 @@ RAG/
 - Cross-encoder reranking: `cross-encoder/ms-marco-MiniLM-L-6-v2` rescores every (query, chunk) pair
 - ToC penalty: deprioritizes table-of-contents-like chunks
 - Scrubs residual export noise before chunks reach the LLM
-- Returns top N chunks (default 5) with `text`, `source`, `page` (section path), `rerank_score`
+- Returns top N chunks (default 5, `top_n=4` used by eval/generation) with `text`, `source`, `page` (section path), `rerank_score`
 - Same Chroma Cloud / local switch as ingestion, via `USE_CHROMA_CLOUD`
 
 ### Generation (`src/generate.py`)
@@ -122,19 +122,21 @@ RAG/
 - Langfuse tracing is opt-in via `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_HOST`
 - When enabled: each turn produces a trace with a `hybrid_retrieval` span (chunks, sections, rerank scores, model costs, latency)
 - When disabled: `observe` becomes a no-op — no tracing dependency required
+- Separately, Langfuse's own LLM-as-a-judge evaluators (e.g. Context Recall, Hallucination) can be attached to live traces or run as a one-off batch over historic observations — a lighter-weight, complementary check alongside the custom DeepEval harness below
 
 ---
 
 ## Evaluation (`eval/evaluate.py`)
 
-- 20-question set (`eval/eval_prompts.json`), curated for category coverage, not size due to api rate limits
+- 20-question set (`eval/eval_prompts.json`), curated for category coverage, not size, due to API rate limits
+- Each question has both `expected_keywords` (fast, no-LLM check) and a full `expected_output` reference answer (used by the LLM-judge metrics)
 - Weak-scoring questions are kept deliberately to surface gaps, not flatter the score
 
 **Pipeline per question:**
-- Retrieve top-4 chunks via the full hybrid + rerank pipeline
+- Retrieve top-4 chunks via the full hybrid + rerank pipeline (full chunk text passed to both generation and judging — no truncation)
 - Generate an answer with `openai/gpt-oss-120b`, using the full production `system` prompt (not a separate lightweight prompt) so the eval reflects real production output, `max_tokens=1200`
-- Fast keyword-hit check (no LLM) due to api rate limits
-- Three DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision. Judge calls use `reasoning_effort="low"` (see migration notes) and `max_tokens=2048`
+- Fast keyword-hit check (no LLM) due to API rate limits
+- Four DeepEval LLM-judge metrics (same model as judge): Faithfulness, Answer Relevancy, Contextual Precision, Contextual Recall — scored against the per-question reference answer, not just keywords. Judge calls use `reasoning_effort="low"` (see migration notes) and `max_tokens=2048`
 
 **Reliability features:**
 - Auto-retry with backoff on Groq 429s
@@ -143,19 +145,22 @@ RAG/
 - Per-question checkpointing (`eval_checkpoint.json`) — resumes after a crash, clears on a clean pass
 - Phase 1 generation cache (`phase1_cache.json`) — resuming after a crash reuses already-generated answers instead of re-calling the LLM for every question; clears on a clean pass
 - Every run writes `eval/report.json`: model/prompt versions, per-metric averages, per-question breakdown, pass/fail gate
-- Judge model overridable via `JUDGE_MODEL` env var (default: `openai/gpt-oss-120b`); CI uses `openai/gpt-oss-20b` for speed
+- Judge model overridable via `JUDGE_MODEL` env var (default: `openai/gpt-oss-120b`); CI's automatic gate uses `openai/gpt-oss-20b` for speed
 
 **Latest result** (20 questions, judge = `openai/gpt-oss-120b`, threshold 0.8, clean full run — no cached/checkpointed state carried over):
 
 | Metric | Score |
 |---|---|
 | Keyword Hit Rate | 90% |
-| Faithfulness (avg) | 98.0% |
-| Answer Relevancy (avg) | 96.7% |
-| Contextual Precision (avg) | 91.7% |
-| **Gate** (min of keyword & faithfulness) | **0.980 — PASSED** |
+| Faithfulness (avg) | 96.8% |
+| Answer Relevancy (avg) | 97.9% |
+| Contextual Precision (avg) | 94.6% |
+| Contextual Recall (avg) | 100% |
+| **Gate** (min of keyword & faithfulness) | **0.90 — PASSED** |
 
-For reference, the last recorded result under the original `llama-3.3-70b-versatile` judge was Faithfulness 91% / Answer Relevancy 91% / Contextual Precision 96%, gate 0.908. The gpt-oss-120b judge scores comparably or better on faithfulness and relevancy, with a modest dip on contextual precision — a known, model-agnostic retrieval/reranking gap tracked under [What's next](#whats-next), not a judge-quality issue.
+Recall at 100% means every fact required by the reference answers was present somewhere in the retrieved context for all 20 questions — retrieval isn't losing information. Precision trailing slightly behind (94.6%) means retrieval occasionally includes a chunk that isn't the most relevant one alongside the correct one, rather than missing anything — a minor ranking-noise gap, not a coverage gap, and the improvement target tracked under [What's next](#whats-next).
+
+For reference, the last recorded result under the original `llama-3.3-70b-versatile` judge (keyword-based reference set, 3 metrics) was Faithfulness 91% / Answer Relevancy 91% / Contextual Precision 96%, gate 0.908 — not directly comparable to the table above since the reference-answer-based scoring and Contextual Recall metric were added afterward, but faithfulness and relevancy are consistent with or better than that baseline.
 
 ---
 
@@ -182,11 +187,13 @@ Current version: **1.4.0**
 
 ## CI/CD (`.github/workflows/ci.yaml`)
 
-On push to `main`:
+**On push to `main`** (automatic):
 1. **Quality gate** — installs `requirements-prod.txt`, runs the keyword-only eval against Chroma Cloud using `openai/gpt-oss-20b` (`python eval/evaluate.py --no-deepeval --threshold 0.8`)
 2. **Deploy** — if the gate passes, force-pushes the repo to the linked Hugging Face Space, which rebuilds the Docker image and redeploys
 
-- DeepEval (faithfulness/relevancy/precision) gate is **not yet wired into CI** due to api rate limits — roadmap item, planned for PRs into `main` only (~5–10 min throttled runtime)
+**On demand** (`workflow_dispatch`, manual):
+- The full DeepEval suite (Faithfulness, Answer Relevancy, Contextual Precision, Contextual Recall — `python eval/evaluate.py --save-report --threshold 0.8`, ~10-15 min throttled runtime) runs as a separate job, triggered manually from the Actions tab via an opt-in checkbox (defaults unchecked)
+- Kept manual rather than automatic-on-every-PR: an earlier attempt at auto-running this on every PR sync hit Groq daily rate limits mid-run, with no human in the loop (unlike local runs, where an exhausted key can be swapped) to recover — a deliberate on-demand check proved more reliable than a flaky automated one that silently stalls or burns quota
 
 ---
 
@@ -252,6 +259,6 @@ LangChain (LCEL) · ChromaDB / Chroma Cloud · BM25 (`rank-bm25`) · `BAAI/bge-s
 
 ## What's next
 
-- Wire the DeepEval gate into CI (currently keyword-only; scope to PRs into `main`)
-- Improve Contextual Precision on scheduling/fee-overlap questions — tune BM25/vector weights, increase `HYBRID_TOP_K`, or add query expansion
+- Move the DeepEval gate from manual-trigger to fully automatic once a higher/dedicated Groq rate-limit tier is available
+- Improve Contextual Precision on scheduling/fee-overlap questions — tune BM25/vector weights, increase `HYBRID_TOP_K`, or add query expansion; test whether raising `top_n` beyond 4 helps without over-diluting precision
 - Add auth to the public API endpoints before wider sharing
