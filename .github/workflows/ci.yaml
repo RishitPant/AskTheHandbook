@@ -44,7 +44,7 @@ jobs:
           RAG_MODEL: openai/gpt-oss-20b
           JUDGE_MODEL: openai/gpt-oss-20b
         run: |
-          python eval/evaluate.py \
+          python -u eval/evaluate.py \
             --no-deepeval \
             --threshold 0.8
 
@@ -83,7 +83,7 @@ jobs:
           RAG_MODEL: openai/gpt-oss-120b
           JUDGE_MODEL: openai/gpt-oss-120b
         run: |
-          python eval/evaluate.py \
+          python -u eval/evaluate.py \
             --save-report \
             --threshold 0.8
 
