@@ -393,7 +393,7 @@ def run_evaluation(
         valid = [s for s in lst if s is not None]
         return sum(valid) / len(valid) if valid else 0.0
 
-    avg_faith = avg_rel = avg_prec = None
+    avg_faith = avg_rel = avg_prec = avg_rec = None
 
     if use_deepeval and results_by_metric:
         avg_faith = _avg(results_by_metric.get("FaithfulnessMetric",       []))
