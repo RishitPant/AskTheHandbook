@@ -18,6 +18,7 @@ from deepeval.metrics import (
     AnswerRelevancyMetric,
     FaithfulnessMetric,
     ContextualPrecisionMetric,
+    ContextualRecallMetric,
 )
 from deepeval.test_case import LLMTestCase
 
@@ -282,9 +283,9 @@ def run_evaluation(
             scores   = cached["scores"]
             print(f"         ↩️  cached (skipped generation)")
         else:
-            chunks   = retriever.retrieve(question, top_n=4)
+            chunks   = retriever.retrieve(question, top_n=6)
             answer   = generate_answer(question, chunks, groq_client)
-            contexts = [c["text"][:1000] for c in chunks]
+            contexts = [c["text"] for c in chunks]
             scores   = [round(c["rerank_score"], 3) for c in chunks]
             phase1_cache[qid] = {"answer": answer, "contexts": contexts, "scores": scores}
             _save_phase1_cache(phase1_cache)
@@ -300,7 +301,7 @@ def run_evaluation(
             input=question,
             actual_output=answer,
             retrieval_context=contexts,
-            expected_output=" | ".join(item["expected_keywords"]),
+            expected_output=item["expected_output"],
         ))
         item_map.append(item)
 
@@ -330,6 +331,10 @@ def run_evaluation(
                 threshold=threshold, model=judge,
                 include_reason=False, async_mode=False,
             ),
+            ContextualRecallMetric(
+                threshold=threshold, model=judge,
+                include_reason=False, async_mode=False,
+            )
         ]
 
         checkpoint = _load_checkpoint()
@@ -394,10 +399,12 @@ def run_evaluation(
         avg_faith = _avg(results_by_metric.get("FaithfulnessMetric",       []))
         avg_rel   = _avg(results_by_metric.get("AnswerRelevancyMetric",    []))
         avg_prec  = _avg(results_by_metric.get("ContextualPrecisionMetric",[]))
+        avg_rec  = _avg(results_by_metric.get("ContextualRecallMetric",[]))
 
         print(f"  Faithfulness (avg)         : {avg_faith:.3f}  {'✅' if avg_faith >= threshold else '❌'}")
         print(f"  Answer Relevancy (avg)     : {avg_rel:.3f}  {'✅' if avg_rel   >= threshold else '❌'}")
         print(f"  Contextual Precision (avg) : {avg_prec:.3f}  {'✅' if avg_prec  >= threshold else '❌'}")
+        print(f"  Contextual Recall (avg) : {avg_prec:.3f}  {'✅' if avg_rec  >= threshold else '❌'}")
 
         print("\n  Per-question breakdown:")
         header = f"  {'ID':<28} {'kw':>3}  {'Faith':>6}  {'Rel':>6}  {'Prec':>6}"
@@ -407,9 +414,10 @@ def run_evaluation(
             f = pq.get("FaithfulnessMetric",       0)
             r = pq.get("AnswerRelevancyMetric",     0)
             p = pq.get("ContextualPrecisionMetric", 0)
+            re = pq.get("ContextualRecallMetric", 0)
             print(
                 f"  {item['id']:<28} {'✅' if kw else '❌':>3} "
-                f" {f:>6.3f}  {r:>6.3f}  {p:>6.3f}"
+                f" {f:>6.3f}  {r:>6.3f}  {p:>6.3f} {re:>6.3f}"
             )
 
     # ── CI gate 
@@ -438,6 +446,7 @@ def run_evaluation(
                 "faithfulness":         round(avg_faith, 4) if avg_faith is not None else None,
                 "answer_relevancy":     round(avg_rel,   4) if avg_rel   is not None else None,
                 "contextual_precision": round(avg_prec,  4) if avg_prec  is not None else None,
+                "contextual_recall": round(avg_rec,  4) if avg_rec  is not None else None,
             },
             "gate_score":  round(gate_metric, 4),
             "passed":      gate_metric >= threshold,
