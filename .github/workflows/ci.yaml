@@ -4,10 +4,20 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      run_deepeval:
+        description: 'Run full DeepEval suite'
+        type: boolean
+        default: false
 
 jobs:
   evaluate:
     name: Keyword Quality Check
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -37,16 +47,56 @@ jobs:
           CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
           CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
           CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
-          RAG_MODEL: llama-3.1-8b-instant
-          JUDGE_MODEL: llama-3.1-8b-instant
+          RAG_MODEL: openai/gpt-oss-20b
+          JUDGE_MODEL: openai/gpt-oss-20b
         run: |
-          python eval/evaluate.py \
+          python -u eval/evaluate.py \
             --no-deepeval \
-            --threshold 0.5
+            --threshold 0.8
+
+  deepeval:
+    name: DeepEval Quality Gate (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.run_deepeval == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements-prod.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r requirements-prod.txt
+
+      - name: Run full DeepEval suite (eval gate)
+        working-directory: .
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CHROMA_API_KEY: ${{ secrets.CHROMA_API_KEY }}
+          CHROMA_TENANT: ${{ secrets.CHROMA_TENANT }}
+          CHROMA_DATABASE: ${{ secrets.CHROMA_DATABASE }}
+          RAG_MODEL: openai/gpt-oss-120b
+          JUDGE_MODEL: openai/gpt-oss-120b
+        run: |
+          python -u eval/evaluate.py \
+            --save-report \
+            --threshold 0.8
 
   deploy:
     name: Push to HuggingFace Space
     needs: evaluate
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
